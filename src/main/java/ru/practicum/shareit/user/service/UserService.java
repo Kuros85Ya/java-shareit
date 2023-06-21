@@ -4,7 +4,6 @@ import ru.practicum.shareit.user.dto.User;
 import ru.practicum.shareit.user.dto.UserRequestDTO;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface UserService {
 
