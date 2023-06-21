@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.dto.User;
+import ru.practicum.shareit.user.dto.UserRequestDTO;
 import ru.practicum.shareit.user.service.UserService;
 
 import javax.validation.Valid;
@@ -25,10 +26,11 @@ public class UserController {
         return service.create(user);
     }
 
-    @PostMapping("/{userId}")
-    public User updateUser(@RequestBody @Valid User user) {
-        log.info("Создаем пользователя: {}", user);
-        return service.create(user);
+    @PatchMapping("/{userId}")
+    public User updateUser(@PathVariable Integer userId, @RequestBody @Valid UserRequestDTO user) {
+        user.setId(userId);
+        log.info("Меняем пользователя: {}", user);
+        return service.update(user);
     }
 
     @GetMapping

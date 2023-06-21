@@ -1,10 +1,11 @@
-package ru.practicum.shareit.user.storage;
+package ru.practicum.shareit.user.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.user.service.UserService;
+import ru.practicum.shareit.user.dto.UserRequestDTO;
 import ru.practicum.shareit.user.dto.User;
+import ru.practicum.shareit.user.storage.UserStorage;
 
 import java.util.*;
 
@@ -30,8 +31,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User update(User user) {
-        return storage.update(user);
+    public User update(UserRequestDTO user) {
+        User oldUser = storage.getUser(user.getId());
+        String email;
+        String name;
+
+        if (user.getEmail() != null) email = user.getEmail();
+        else email = oldUser.getEmail();
+
+        if (user.getName() != null) name = user.getName();
+        else name = oldUser.getName();
+
+        return storage.update(new User(user.getId(), name, email));
     }
 
     @Override

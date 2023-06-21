@@ -1,6 +1,7 @@
 package ru.practicum.shareit.user.storage;
 
 import ru.practicum.shareit.user.dto.User;
+
 import java.util.HashMap;
 
 public interface UserStorage {

@@ -2,6 +2,7 @@ package ru.practicum.shareit.item.storage;
 
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.item.model.Item;
+
 import java.util.HashMap;
 import java.util.NoSuchElementException;
 
@@ -9,7 +10,7 @@ import java.util.NoSuchElementException;
 public class InMemoryItemStorage implements ItemStorage {
     private final HashMap<Integer, Item> items = new HashMap<>();
 
-    private Integer generatorId;
+    private Integer generatorId = 0;
 
     public int generateId() {
         return ++generatorId;
@@ -42,11 +43,5 @@ public class InMemoryItemStorage implements ItemStorage {
         checkIfItemExists(item.getId());
         items.put(item.getId(), item);
         return item;
-    }
-
-    @Override
-    public void remove(Integer id) {
-        checkIfItemExists(id);
-        items.remove(id);
     }
 }

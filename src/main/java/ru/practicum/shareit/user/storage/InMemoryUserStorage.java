@@ -1,4 +1,4 @@
-package ru.practicum.shareit.user.service;
+package ru.practicum.shareit.user.storage;
 
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.user.dto.User;
@@ -12,7 +12,7 @@ import java.util.NoSuchElementException;
 public class InMemoryUserStorage implements UserStorage {
     private final HashMap<Integer, User> users = new HashMap<>();
 
-    private Integer generatorId;
+    private Integer generatorId = 0;
 
     public int generateId() {
         return ++generatorId;

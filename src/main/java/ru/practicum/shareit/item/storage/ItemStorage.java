@@ -8,11 +8,9 @@ public interface ItemStorage {
 
     HashMap<Integer, Item> getAll();
 
-    Item update(Item user);
+    Item update(Item item);
 
-    Item save(Item user);
-
-    void remove(Integer id);
+    Item save(Item item);
 
     Item getById(Integer id);
 }
