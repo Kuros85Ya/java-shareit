@@ -1,8 +1,7 @@
 package ru.practicum.shareit.user.storage;
 
 import org.springframework.stereotype.Component;
-import ru.practicum.shareit.user.dto.User;
-import ru.practicum.shareit.user.storage.UserStorage;
+import ru.practicum.shareit.user.model.User;
 
 import javax.validation.ValidationException;
 import java.util.HashMap;

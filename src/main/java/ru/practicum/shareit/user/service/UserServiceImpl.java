@@ -4,10 +4,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.user.dto.UserRequestDTO;
-import ru.practicum.shareit.user.dto.User;
+import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.storage.UserStorage;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -17,7 +18,7 @@ public class UserServiceImpl implements UserService {
     private final UserStorage storage;
 
     public List<User> getAll() {
-        return new ArrayList<>(storage.getUsers().values());
+        return storage.getUsers().values().stream().collect(Collectors.toList());
     }
 
     @Override
@@ -36,11 +37,17 @@ public class UserServiceImpl implements UserService {
         String email;
         String name;
 
-        if (user.getEmail() != null) email = user.getEmail();
-        else email = oldUser.getEmail();
+        if (user.getEmail() != null) {
+            email = user.getEmail();
+        } else {
+            email = oldUser.getEmail();
+        }
 
-        if (user.getName() != null) name = user.getName();
-        else name = oldUser.getName();
+        if (user.getName() != null) {
+            name = user.getName();
+        } else {
+            name = oldUser.getName();
+        }
 
         return storage.update(new User(user.getId(), name, email));
     }

@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.storage.ItemStorage;
-import ru.practicum.shareit.user.dto.User;
+import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.storage.UserStorage;
 
 import java.util.*;
@@ -18,10 +18,6 @@ import java.util.stream.Collectors;
 public class ItemServiceImpl implements ItemService {
     private final ItemStorage itemStorage;
     private final UserStorage userStorage;
-
-    public List<Item> getAll() {
-        return new ArrayList<>(itemStorage.getAll().values());
-    }
 
     @Override
     public Item getById(int id) {
@@ -48,16 +44,25 @@ public class ItemServiceImpl implements ItemService {
         String description;
         Boolean available;
 
-        if (item.getName() != null) name = item.getName();
-        else name = oldItem.getName();
+        if (item.getName() != null) {
+            name = item.getName();
+        } else {
+            name = oldItem.getName();
+        }
 
-        if (item.getDescription() != null) description = item.getDescription();
-        else description = oldItem.getDescription();
+        if (item.getDescription() != null) {
+            description = item.getDescription();
+        } else {
+            description = oldItem.getDescription();
+        }
 
-        if (item.getAvailable() != null) available = item.getAvailable();
-        else available = oldItem.getAvailable();
+        if (item.getAvailable() != null) {
+            available = item.getAvailable();
+        } else {
+            available = oldItem.getAvailable();
+        }
 
-        return itemStorage.update(new Item(item.getId(), name, description, available, userStorage.getUser(userId)));
+        return itemStorage.update(new Item(item.getId(), name, description, available, userStorage.getUser(userId), null));
     }
 
     @Override

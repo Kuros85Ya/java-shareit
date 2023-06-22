@@ -1,6 +1,6 @@
 package ru.practicum.shareit.user.service;
 
-import ru.practicum.shareit.user.dto.User;
+import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.dto.UserRequestDTO;
 
 import java.util.List;

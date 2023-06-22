@@ -1,43 +1,34 @@
 package ru.practicum.shareit.item.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import ru.practicum.shareit.request.ItemRequest;
-import ru.practicum.shareit.user.dto.User;
+import ru.practicum.shareit.user.model.User;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 /**
- * TODO Sprint add-controllers.
- */
+ * Вещь для аренды
+ * id — уникальный идентификатор вещи;
+ * name — краткое название;
+ * description — развёрнутое описание;
+ * available — статус о том, доступна или нет вещь для аренды;
+ * owner — владелец вещи;
+ * request —  если вещь была создана по запросу другого пользователя, то в этом поле будет храниться ссылка на соответствующий запрос
+ **/
 @Data
+@AllArgsConstructor
+@RequiredArgsConstructor
 public class Item {
-    private Integer id; // — уникальный идентификатор вещи;
+    private Integer id;
     @NotEmpty
-    private String name; // — краткое название;
+    private String name;
     @NotEmpty
-    private String description; // — развёрнутое описание;
+    private String description;
     @NotNull
-    private Boolean available; // — статус о том, доступна или нет вещь для аренды;
-    private User owner; // — владелец вещи;
-    private ItemRequest request; // — если вещь была создана по запросу другого польз
-
-    public Item() {
-    }
-
-    public Item(Integer id, String name, String description, Boolean available, User owner) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.available = available;
-        this.owner = owner;
-    }
-
-    public Item(String name, String description, Boolean available, User owner, ItemRequest request) {
-        this.name = name;
-        this.description = description;
-        this.available = available;
-        this.owner = owner;
-        this.request = request;
-    }
+    private Boolean available;
+    private User owner;
+    private ItemRequest request;
 }
