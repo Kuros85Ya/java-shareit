@@ -18,18 +18,18 @@ import java.util.Set;
 @RequestMapping("/items")
 public class ItemController {
 
-    private final String OWNER = "X-Sharer-User-Id";
+    private static final String OWNER_ID_HEADER = "X-Sharer-User-Id";
     private final ItemService itemService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Item create(@RequestBody @Valid Item item, @RequestHeader(OWNER) Integer userId) {
+    public Item create(@RequestBody @Valid Item item, @RequestHeader(OWNER_ID_HEADER) Integer userId) {
         log.info("Создаем вещь: {}", item);
         return itemService.create(userId, item);
     }
 
     @PatchMapping("/{itemId}")
-    public Item update(@PathVariable Integer itemId, @RequestBody @Valid ItemDto item, @RequestHeader(OWNER) Integer userId) {
+    public Item update(@PathVariable Integer itemId, @RequestBody @Valid ItemDto item, @RequestHeader(OWNER_ID_HEADER) Integer userId) {
         log.info("Изменяем вещь: {}", item);
         item.setId(itemId);
         return itemService.update(userId, item);
@@ -42,7 +42,7 @@ public class ItemController {
     }
 
     @GetMapping()
-    public List<Item> getUserItems(@RequestHeader(OWNER) Integer userId) {
+    public List<Item> getUserItems(@RequestHeader(OWNER_ID_HEADER) Integer userId) {
         log.info("Вывести вещи пользователя ID = {}", userId);
         return itemService.getAllUserItems(userId);
     }
