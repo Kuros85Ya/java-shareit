@@ -2,7 +2,6 @@ package ru.practicum.shareit.user.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.user.dto.UserRequestDTO;
 import ru.practicum.shareit.user.model.User;
