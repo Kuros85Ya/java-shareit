@@ -42,10 +42,4 @@ public class Item {
     private User owner;
     @ManyToOne
     private ItemRequest request;
-//    @OneToOne
-//    private Booking lastBooking;
-//    @OneToOne
-//    private Booking nextBooking;
-    //    @OneToMany
-//    private List<String> comments;
 }

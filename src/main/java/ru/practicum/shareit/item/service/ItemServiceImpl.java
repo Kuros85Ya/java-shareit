@@ -3,11 +3,11 @@ package ru.practicum.shareit.item.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.booking.BookingComparator;
+import ru.practicum.shareit.booking.comparator.BookingComparator;
 import ru.practicum.shareit.booking.enums.Status;
 import ru.practicum.shareit.booking.model.Booking;
-import ru.practicum.shareit.booking.service.BookingRepository;
-import ru.practicum.shareit.item.ItemComparator;
+import ru.practicum.shareit.booking.repository.BookingRepository;
+import ru.practicum.shareit.item.comparator.ItemComparator;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.CommentResponseDTO;
 import ru.practicum.shareit.item.dto.ItemDto;
@@ -16,8 +16,10 @@ import ru.practicum.shareit.item.mapper.CommentMapper;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.repository.CommentRepository;
+import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.user.service.UserRepository;
+import ru.practicum.shareit.user.repository.UserRepository;
 
 import javax.validation.ValidationException;
 import java.time.LocalDateTime;
@@ -37,27 +39,6 @@ public class ItemServiceImpl implements ItemService {
     public ItemResponseDto getById(int id, int userId) {
         Item item = getItem(id);
         return enrichItemWithExtraData(item, userId);
-    }
-
-    private ItemResponseDto enrichItemWithExtraData(Item item, Integer userId) {
-        List<Booking> bookings = bookingRepository.findAllByItem(item);
-        Booking lastBooking = bookings.stream()
-                .filter(it -> it.getStatus().equals(Status.WAITING) || it.getStatus().equals(Status.APPROVED))
-                .filter(it -> it.getStart().isBefore(LocalDateTime.now()))
-                .min(new BookingComparator())
-                .orElse(null);
-        Booking nextBooking = bookings.stream()
-                .filter(it -> it.getStatus().equals(Status.WAITING) || it.getStatus().equals(Status.APPROVED))
-                .filter(it -> it.getStart().isAfter(LocalDateTime.now()))
-                .max(new BookingComparator())
-                .orElse(null);
-
-        List<CommentResponseDTO> comments = commentRepository.findCommentByItemEquals(item).stream().map(it -> CommentMapper.toCommentResponseDTO(it, it.getAuthor())).collect(Collectors.toList());
-        if (item.getOwner().getId().equals(userId)) {
-            return ItemMapper.toItemResponseDto(item, nextBooking, lastBooking, comments);
-        } else {
-            return ItemMapper.toItemResponseDto(item, null, null, comments);
-        }
     }
 
     @Override
@@ -150,6 +131,27 @@ public class ItemServiceImpl implements ItemService {
         List<Booking> booking = bookingRepository.getBookingsByBookerAndItemAndStatusEqualsAndStartBefore(user, item, Status.APPROVED, LocalDateTime.now());
         if (booking == null || booking.isEmpty()) {
             throw new ValidationException("Пользователь не пользовался этой вещью");
+        }
+    }
+
+    private ItemResponseDto enrichItemWithExtraData(Item item, Integer userId) {
+        List<Booking> bookings = bookingRepository.findAllByItem(item);
+        Booking lastBooking = bookings.stream()
+                .filter(it -> it.getStatus().equals(Status.WAITING) || it.getStatus().equals(Status.APPROVED))
+                .filter(it -> it.getStart().isBefore(LocalDateTime.now()))
+                .min(new BookingComparator())
+                .orElse(null);
+        Booking nextBooking = bookings.stream()
+                .filter(it -> it.getStatus().equals(Status.WAITING) || it.getStatus().equals(Status.APPROVED))
+                .filter(it -> it.getStart().isAfter(LocalDateTime.now()))
+                .max(new BookingComparator())
+                .orElse(null);
+
+        List<CommentResponseDTO> comments = commentRepository.findCommentByItemEquals(item).stream().map(it -> CommentMapper.toCommentResponseDTO(it, it.getAuthor())).collect(Collectors.toList());
+        if (item.getOwner().getId().equals(userId)) {
+            return ItemMapper.toItemResponseDto(item, nextBooking, lastBooking, comments);
+        } else {
+            return ItemMapper.toItemResponseDto(item, null, null, comments);
         }
     }
 }

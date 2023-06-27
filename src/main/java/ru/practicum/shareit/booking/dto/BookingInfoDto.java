@@ -8,6 +8,6 @@ import lombok.RequiredArgsConstructor;
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class BookingInfoDto {
-    Integer id;
-    Integer bookerId;
+    private Integer id;
+    private Integer bookerId;
 }

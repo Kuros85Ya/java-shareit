@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 @AllArgsConstructor
 public class BookingDto {
-    public Integer itemId;
-    public LocalDateTime start;
-    public LocalDateTime end;
+    private Integer itemId;
+    private LocalDateTime start;
+    private LocalDateTime end;
 }
