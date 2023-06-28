@@ -5,13 +5,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
+import javax.validation.constraints.NotBlank;
+
 @Data
 @Builder
 @RequiredArgsConstructor
 @AllArgsConstructor
-public class ItemDto {
-    private Integer id;
-    private String name;
-    private String description;
-    private Boolean available;
+public class CommentDto {
+    @NotBlank
+    private String text;
 }

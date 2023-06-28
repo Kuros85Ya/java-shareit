@@ -12,7 +12,7 @@ public class InMemoryItemStorage implements ItemStorage {
 
     private Integer generatorId = 0;
 
-    public int generateId() {
+    private int generateId() {
         return ++generatorId;
     }
 
