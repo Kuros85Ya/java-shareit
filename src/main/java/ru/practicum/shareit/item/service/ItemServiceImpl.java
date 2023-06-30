@@ -2,22 +2,23 @@ package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.comparator.BookingComparator;
 import ru.practicum.shareit.booking.enums.Status;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.item.comparator.ItemComparator;
-import ru.practicum.shareit.item.dto.CommentDto;
-import ru.practicum.shareit.item.dto.CommentResponseDTO;
-import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.dto.ItemResponseDto;
+import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.mapper.CommentMapper;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.request.mapper.RequestMapper;
+import ru.practicum.shareit.request.model.Request;
+import ru.practicum.shareit.request.repository.RequestRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -34,6 +35,7 @@ public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final CommentRepository commentRepository;
     private final BookingRepository bookingRepository;
+    private final RequestRepository requestRepository;
 
     @Override
     public ItemResponseDto getById(int id, int userId) {
@@ -42,15 +44,22 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Item create(Integer userId, Item item) {
-        User owner = getOwner(userId);
-        item.setOwner(owner);
-        return itemRepository.save(item);
+    public CreatedItemResponseDto create(Integer userId, ItemRequestDto item) {
+        User owner = getUser(userId);
+        Request request;
+        if (item.getRequestId() != null) {
+            request = getRequest(item.getRequestId());
+        } else {
+            request = null;
+        }
+        Item created = ItemMapper.toItem(item, owner, request);
+        itemRepository.save(created);
+        return ItemMapper.ioCreatedItemResponseDto(created);
     }
 
     @Override
     public CommentResponseDTO createComment(CommentDto comment, Integer userId, Integer itemId) {
-        User author = getOwner(userId);
+        User author = getUser(userId);
         Item item = getItem(itemId);
         checkIfAuthorWasOwner(author, item);
         Comment commentDb = commentRepository.save(CommentMapper.toComment(comment, author, item));
@@ -65,7 +74,7 @@ public class ItemServiceImpl implements ItemService {
         Item oldItem = getItem(item.getId());
         checkIfUserIsOwner(userId, oldItem);
 
-        User owner = getOwner(userId);
+        User owner = getUser(userId);
 
         String name;
         String description;
@@ -93,26 +102,35 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<Item> search(String query) {
+    public List<Item> search(String query, Integer from, Integer size) {
+        PageRequest request = RequestMapper.toPageRequest(from, size);
+
         if (query.isBlank()) {
             return Collections.emptyList();
         } else {
-            return itemRepository.search(query);
+            return itemRepository.search(query, request);
         }
     }
 
     @Override
-    public List<ItemResponseDto> getAllUserItems(Integer userId) {
-        return itemRepository.findAll().stream()
+    public List<ItemResponseDto> getAllUserItems(Integer userId, Integer from, Integer size) {
+        PageRequest request = RequestMapper.toPageRequest(from, size);
+
+        return itemRepository.findAll(request).stream()
                 .filter(it -> it.getOwner().getId().equals(userId))
                 .sorted(new ItemComparator())
                 .map(it -> enrichItemWithExtraData(it, userId))
                 .collect(Collectors.toList());
     }
 
-    private User getOwner(Integer userId) {
+    private User getUser(Integer userId) {
         return userRepository.findById(userId).orElseThrow(()
                 -> new NoSuchElementException("Пользователь с ID = " + userId + " не найдена."));
+    }
+
+    private Request getRequest(Integer requestId) {
+        return requestRepository.findById(requestId).orElseThrow(()
+                -> new NoSuchElementException("Запрос с ID = " + requestId + " не найден."));
     }
 
     private Item getItem(Integer itemId) {

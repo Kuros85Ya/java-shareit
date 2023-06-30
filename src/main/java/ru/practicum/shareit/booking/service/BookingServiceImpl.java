@@ -2,6 +2,7 @@ package ru.practicum.shareit.booking.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.comparator.BookingComparator;
 import ru.practicum.shareit.booking.dto.BookingDto;
@@ -12,6 +13,7 @@ import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.request.mapper.RequestMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -61,13 +63,14 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<Booking> getAllUserBookings(Integer userId, State state) {
+    public List<Booking> getAllUserBookings(Integer userId, State state, Integer from, Integer size) {
         List<Booking> bookings;
         User user = getUser(userId);
+        PageRequest request = RequestMapper.toPageRequest(from, size);
 
         switch (state) {
             case ALL:
-                bookings = bookingRepository.findAllByBooker(user);
+                bookings = bookingRepository.findAllByBookerOrderByCreatedDesc(user, request);
                 break;
             case PAST:
                 bookings = bookingRepository.getBookingsByBookerAndEndIsBefore(user, LocalDateTime.now())
@@ -97,12 +100,16 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<Booking> getAllUserItemBookings(Integer userId, State state) {
+    public List<Booking> getAllUserItemBookings(Integer userId, State state, Integer from, Integer size) {
         User user = getUser(userId);
         List<Booking> bookings;
 
-        List<Item> itemsOwned = itemRepository.findAllByOwner(user);
-        List<Booking> allUserBookings = itemsOwned.stream().map(bookingRepository::findAllByItem).flatMap(List::stream).collect(Collectors.toList());
+        PageRequest request = RequestMapper.toPageRequest(from, size);
+
+//        List<Item> itemsOwned = itemRepository.findAllByOwner(user);
+//        List<Booking> allUserBookings = itemsOwned.stream().map(bookingRepository::findAllByItem).flatMap(List::stream).collect(Collectors.toList());
+
+        List<Booking> allUserBookings = bookingRepository.getAllUserItems(user, request);
 
         switch (state) {
             case ALL:
