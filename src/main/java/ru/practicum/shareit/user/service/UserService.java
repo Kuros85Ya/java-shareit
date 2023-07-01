@@ -9,7 +9,7 @@ public interface UserService {
 
     List<User> getAll();
 
-    User getById(int id);
+    User getUser(Integer id);
 
     User create(User user);
 

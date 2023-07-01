@@ -2,7 +2,6 @@ package ru.practicum.shareit.request.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.item.model.Item;
@@ -13,8 +12,7 @@ import ru.practicum.shareit.request.dto.RequestedItemResponseDto;
 import ru.practicum.shareit.request.mapper.RequestMapper;
 import ru.practicum.shareit.request.model.Request;
 import ru.practicum.shareit.request.repository.RequestRepository;
-import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.user.repository.UserRepository;
+import ru.practicum.shareit.user.service.UserServiceImpl;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -26,17 +24,17 @@ import java.util.stream.Collectors;
 public class RequestServiceImpl implements RequestService {
     private final RequestRepository requestRepository;
     private final ItemRepository itemRepository;
-    private final UserRepository userRepository;
+    private final UserServiceImpl userService;
 
     @Override
     public Request create(Integer userId, RequestRequestDTO request) {
-        Request req = RequestMapper.toRequest(request, getUser(userId));
+        Request req = RequestMapper.toRequest(request, userService.getUser(userId));
         return requestRepository.save(req);
     }
 
     @Override
     public List<RequestResponseDTO> getItemsThatWereCreatedByRequest(Integer userId) {
-        getUser(userId);
+        userService.getUser(userId);
         List<Request> allRequests = requestRepository.findAll();
         List<Item> allItems = allRequests.stream().map(itemRepository::findAllByRequest).flatMap(List::stream).collect(Collectors.toList());
 
@@ -55,7 +53,7 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     public RequestResponseDTO getSingleRequestById(Integer requestId, Integer userId) {
-        getUser(userId);
+        userService.getUser(userId);
         Request request = requestRepository.findById(requestId).orElseThrow(()
                 -> new NoSuchElementException("Не найден запрос с таким id"));
         List<RequestedItemResponseDto> allItems = itemRepository.findAllByRequest(request).stream().map(RequestMapper::toItemRequestResponseDto).collect(Collectors.toList());
@@ -63,8 +61,8 @@ public class RequestServiceImpl implements RequestService {
                 -> new NoSuchElementException("Не найден запрос с таким id"));
     }
 
-    private User getUser(Integer userId) {
-        return userRepository.findById(userId).orElseThrow(()
-                -> new NoSuchElementException("Пользователь с ID = " + userId + " не найдена."));
+    public Request getRequest(Integer requestId) {
+        return requestRepository.findById(requestId).orElseThrow(()
+                -> new NoSuchElementException("Запрос с ID = " + requestId + " не найден."));
     }
 }

@@ -1,7 +1,6 @@
 package ru.practicum.shareit.request.mapper;
 
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.dto.RequestRequestDTO;
@@ -23,7 +22,7 @@ public class RequestMapper {
             throw new ValidationException("Недопустимое значение для параметров from и size");
         }
 
-        return PageRequest.of(from/size, size);
+        return PageRequest.of(from / size, size);
     }
 
     public static Request toRequest(RequestRequestDTO requestDTO, User requestor) {

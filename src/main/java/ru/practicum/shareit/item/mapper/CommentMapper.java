@@ -15,7 +15,7 @@ public class CommentMapper {
                 comment.getId(),
                 comment.getText(),
                 user.getName(),
-                LocalDateTime.now());
+                comment.getCreated());
     }
 
     public static Comment toComment(CommentDto comment, User user, Item item) {

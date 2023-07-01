@@ -22,7 +22,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getById(int id) {
+    public User getUser(Integer id) {
         return repository.findById(id).orElseThrow(()
                 -> new NoSuchElementException("Пользователь с ID = " + id + " не найден."));
     }
@@ -34,8 +34,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User update(UserRequestDTO user) {
-        User oldUser = repository.findById(user.getId()).orElseThrow(()
-                -> new NoSuchElementException("Пользователь с ID = " + user.getId() + " не найден."));
+        User oldUser = getUser(user.getId());
         String email;
         String name;
 

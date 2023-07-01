@@ -18,9 +18,9 @@ import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.request.mapper.RequestMapper;
 import ru.practicum.shareit.request.model.Request;
-import ru.practicum.shareit.request.repository.RequestRepository;
+import ru.practicum.shareit.request.service.RequestServiceImpl;
 import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.user.repository.UserRepository;
+import ru.practicum.shareit.user.service.UserServiceImpl;
 
 import javax.validation.ValidationException;
 import java.time.LocalDateTime;
@@ -31,11 +31,11 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class ItemServiceImpl implements ItemService {
-    private final UserRepository userRepository;
+    private final UserServiceImpl userService;
     private final ItemRepository itemRepository;
     private final CommentRepository commentRepository;
     private final BookingRepository bookingRepository;
-    private final RequestRepository requestRepository;
+    private final RequestServiceImpl requestService;
 
     @Override
     public ItemResponseDto getById(int id, int userId) {
@@ -45,10 +45,10 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public CreatedItemResponseDto create(Integer userId, ItemRequestDto item) {
-        User owner = getUser(userId);
+        User owner = userService.getUser(userId);
         Request request;
         if (item.getRequestId() != null) {
-            request = getRequest(item.getRequestId());
+            request = requestService.getRequest(item.getRequestId());
         } else {
             request = null;
         }
@@ -59,7 +59,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public CommentResponseDTO createComment(CommentDto comment, Integer userId, Integer itemId) {
-        User author = getUser(userId);
+        User author = userService.getUser(userId);
         Item item = getItem(itemId);
         checkIfAuthorWasOwner(author, item);
         Comment commentDb = commentRepository.save(CommentMapper.toComment(comment, author, item));
@@ -74,7 +74,7 @@ public class ItemServiceImpl implements ItemService {
         Item oldItem = getItem(item.getId());
         checkIfUserIsOwner(userId, oldItem);
 
-        User owner = getUser(userId);
+        User owner = userService.getUser(userId);
 
         String name;
         String description;
@@ -123,21 +123,6 @@ public class ItemServiceImpl implements ItemService {
                 .collect(Collectors.toList());
     }
 
-    private User getUser(Integer userId) {
-        return userRepository.findById(userId).orElseThrow(()
-                -> new NoSuchElementException("Пользователь с ID = " + userId + " не найдена."));
-    }
-
-    private Request getRequest(Integer requestId) {
-        return requestRepository.findById(requestId).orElseThrow(()
-                -> new NoSuchElementException("Запрос с ID = " + requestId + " не найден."));
-    }
-
-    private Item getItem(Integer itemId) {
-        return itemRepository.findById(itemId).orElseThrow(()
-                -> new NoSuchElementException("Вещь с ID = " + itemId + " не найдена."));
-    }
-
     private void checkIfUserIsOwner(Integer userId, Item item) {
         Integer ownerId = item.getOwner().getId();
 
@@ -171,5 +156,10 @@ public class ItemServiceImpl implements ItemService {
         } else {
             return ItemMapper.toItemResponseDto(item, null, null, comments);
         }
+    }
+
+    public Item getItem(Integer itemId) {
+        return itemRepository.findById(itemId).orElseThrow(()
+                -> new NoSuchElementException("Вещь с ID = " + itemId + " не найдена."));
     }
 }
