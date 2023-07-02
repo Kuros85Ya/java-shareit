@@ -49,8 +49,9 @@ public class UserServiceImpl implements UserService {
         } else {
             name = oldUser.getName();
         }
+        User updatedUser = new User(user.getId(), name, email);
 
-        return repository.save(new User(user.getId(), name, email));
+        return repository.save(updatedUser);
     }
 
     @Override

@@ -5,6 +5,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import ru.practicum.shareit.booking.dto.BookingInfoDto;
 import ru.practicum.shareit.booking.enums.Status;
 import ru.practicum.shareit.booking.model.Booking;
@@ -340,14 +342,82 @@ class ItemServiceImplTest {
 
 
     @Test
-    void search() {
+    void search_posititve() {
+        int ownerId = 2;
+        PageRequest pageRequest = PageRequest.of(0, 10);
+
+        String query = "nam";
+
+        User owner = new User(ownerId, "owner", "owner@mail.ru");
+        Item existingItem = new Item(1, "itemName", null, true, owner, null);
+
+        when(itemRepository.search(query, pageRequest)).thenReturn(List.of(existingItem));
+
+        List<Item> actual = service.search(query, 0, 10);
+        assertEquals(actual, List.of(existingItem));
+    }
+
+    @Test
+    void search_empty_negative() {
+        String query = "";
+        List<Item> actual = service.search(query, 0, 10);
+        assertEquals(actual, List.of());
     }
 
     @Test
     void getAllUserItems() {
+        PageRequest pageRequest = PageRequest.of(0, 10);
+
+        int ownerId = 2;
+
+        User owner = new User(ownerId, "owner", "owner@mail.ru");
+        Item ownerItem1 = new Item(1,
+                "itemName1",
+                "itemDesc1",
+                true,
+                owner,
+                null);
+
+        Item ownerItem2 = new Item(2,
+                "itemName2",
+                "itemDesc2",
+                true,
+                owner,
+                null);
+
+        when(itemRepository.findAll(pageRequest)).thenReturn(new PageImpl<>(Arrays.asList(ownerItem1, ownerItem2)));
+        when(bookingRepository.findAllByItem(any())).thenReturn(List.of());
+        when(commentRepository.findCommentByItemEquals(any())).thenReturn(List.of());
+
+        ItemResponseDto expected1 = new ItemResponseDto(1,
+                ownerItem1.getName(),
+                ownerItem1.getDescription(),
+                ownerItem1.getAvailable(),
+                owner,
+                null,
+                null,
+                null,
+                List.of()
+                );
+
+        ItemResponseDto expected2 = new ItemResponseDto(2,
+                ownerItem2.getName(),
+                ownerItem2.getDescription(),
+                ownerItem2.getAvailable(),
+                owner,
+                null,
+                null,
+                null,
+                List.of()
+        );
+        List<ItemResponseDto> actual = service.getAllUserItems(ownerId, 0, 10);
+
+        assertEquals(actual, List.of(expected1, expected2));
     }
 
     @Test
-    void getItem() {
+    void getItem_negative() {
+        when(itemRepository.findById(1)).thenReturn(Optional.empty());
+        assertThrows(NoSuchElementException.class, () -> service.getItem(1));
     }
 }

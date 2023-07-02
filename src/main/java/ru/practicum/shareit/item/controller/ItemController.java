@@ -29,7 +29,7 @@ public class ItemController {
 
     @PostMapping("/{itemId}/comment")
     @ResponseStatus(HttpStatus.OK)
-    public CommentResponseDTO createComment(@RequestBody @Valid CommentDto comment, @RequestHeader(OWNER_ID_HEADER) Integer userId, @PathVariable Integer itemId) {
+    public CommentResponseDTO createComment(@RequestBody @Valid CommentDto comment,@RequestHeader(OWNER_ID_HEADER) Integer userId, @PathVariable Integer itemId) {
         log.info("Оставлен комментарий к вещи: {}", itemId);
         return itemService.createComment(comment, userId, itemId);
     }
@@ -54,7 +54,7 @@ public class ItemController {
     }
 
     @GetMapping("/search")
-    public List<Item> getUserItems(@RequestParam(name = "text", defaultValue = "") String query, @RequestParam(defaultValue = "0") Integer from, @RequestParam(defaultValue = "10") Integer size) {
+    public List<Item> search(@RequestParam(name = "text", defaultValue = "") String query, @RequestParam(defaultValue = "0") Integer from, @RequestParam(defaultValue = "10") Integer size) {
         log.info("Вывести вещи по запросу {}", query);
         return itemService.search(query, from, size);
     }

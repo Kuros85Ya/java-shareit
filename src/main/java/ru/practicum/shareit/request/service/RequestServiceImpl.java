@@ -45,7 +45,10 @@ public class RequestServiceImpl implements RequestService {
     @Override
     public List<RequestResponseDTO> getAllRequestsPageable(Integer userId, Integer from, Integer size) {
         PageRequest request = RequestMapper.toPageRequest(from, size);
-        List<Request> neededRequests = requestRepository.findAll(request).stream().filter(it -> !it.getRequestor().getId().equals(userId)).collect(Collectors.toList());
+        List<Request> neededRequests = requestRepository.findAll(request)
+                .stream()
+                .filter(it -> !it.getRequestor().getId().equals(userId))
+                .collect(Collectors.toList());
         List<RequestedItemResponseDto> allItems = neededRequests.stream().map(itemRepository::findAllByRequest).flatMap(List::stream).map(RequestMapper::toItemRequestResponseDto).collect(Collectors.toList());
 
         return RequestMapper.toRequestResponseDto(neededRequests, allItems);
@@ -54,11 +57,9 @@ public class RequestServiceImpl implements RequestService {
     @Override
     public RequestResponseDTO getSingleRequestById(Integer requestId, Integer userId) {
         userService.getUser(userId);
-        Request request = requestRepository.findById(requestId).orElseThrow(()
-                -> new NoSuchElementException("Не найден запрос с таким id"));
+        Request request = getRequest(requestId);
         List<RequestedItemResponseDto> allItems = itemRepository.findAllByRequest(request).stream().map(RequestMapper::toItemRequestResponseDto).collect(Collectors.toList());
-        return RequestMapper.toRequestResponseDto(List.of(request), allItems).stream().findFirst().orElseThrow(()
-                -> new NoSuchElementException("Не найден запрос с таким id"));
+        return RequestMapper.toRequestResponseDto(List.of(request), allItems).get(0);
     }
 
     public Request getRequest(Integer requestId) {

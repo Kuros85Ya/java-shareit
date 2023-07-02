@@ -45,11 +45,13 @@ class BookingServiceImplTest {
     @Test
     void create_posititve() {
         Integer userId = 1;
+        LocalDateTime startDt = LocalDateTime.now().plusHours(1);
+        LocalDateTime endDt = LocalDateTime.now().plusDays(10);
         User booker = new User(1, "test", "test@mail.ru");
         User owner = new User(2, "owner", "owner@mail.ru");
         Item existingItem = new Item(1, "itemName", "itemDesc", true, owner, null);
 
-        BookingDto bookingDto = new BookingDto(1, LocalDateTime.now().plusHours(1), LocalDateTime.now().plusDays(10));
+        BookingDto bookingDto = new BookingDto(1, startDt, endDt);
 
         when(userService.getUser(userId)).thenReturn(booker);
         when(itemService.getItem(bookingDto.getItemId())).thenReturn(existingItem);
