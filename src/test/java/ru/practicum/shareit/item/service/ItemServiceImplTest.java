@@ -53,7 +53,7 @@ class ItemServiceImplTest {
     ItemServiceImpl service;
 
     @Test
-    void getById_positive_withCommentsAndBooking() {
+    void getById_whenCommentsAndBookingArePresent_thenItemWithWholeInformationIsReturned() {
         LocalDateTime startDt = LocalDateTime.now().plusHours(1);
         LocalDateTime endDt = LocalDateTime.now().plusDays(10);
         LocalDateTime created = LocalDateTime.now();
@@ -93,7 +93,7 @@ class ItemServiceImplTest {
     }
 
     @Test
-    void getById_NotOwner_withComments_Positive() {
+    void getById_whenNotOwnerGetsItemWithComments_thenItGetsReturned() {
         LocalDateTime startDt = LocalDateTime.now().plusHours(1);
         LocalDateTime endDt = LocalDateTime.now().plusDays(10);
         LocalDateTime created = LocalDateTime.now();
@@ -133,7 +133,7 @@ class ItemServiceImplTest {
     }
 
     @Test
-    void create_withRequest_positive() {
+    void create_whenItemIsCreatedFittingRequest_thenWholeInformationGetsCreated() {
         LocalDateTime created = LocalDateTime.of(2022, 10, 10, 10, 10);
         int bookerId = 1;
         int ownerId = 2;
@@ -163,7 +163,7 @@ class ItemServiceImplTest {
     }
 
     @Test
-    void create_withoutRequest_positive() {
+    void create_whenItemWasCreatedWithoutRequest_thenItGetsCreated() {
         int ownerId = 2;
 
         User owner = new User(ownerId, "owner", "owner@mail.ru");
@@ -187,7 +187,7 @@ class ItemServiceImplTest {
     }
 
     @Test
-    void createComment_positive() {
+    void createComment_whenCommentIsValid_thenItGetsCreated() {
         LocalDateTime startDt = LocalDateTime.now().minusDays(20);
         LocalDateTime endDt = LocalDateTime.now().minusDays(10);
         LocalDateTime created = LocalDateTime.now();
@@ -218,7 +218,7 @@ class ItemServiceImplTest {
     }
 
     @Test
-    void createComment_negative_didnt_use() {
+    void createComment_whenAuthorDidntUseItem_thenValidationExceptionIsThrown() {
         LocalDateTime created = LocalDateTime.now();
         int itemId = 1;
         int bookerId = 1;
@@ -236,7 +236,7 @@ class ItemServiceImplTest {
     }
 
     @Test
-    void update_positive() {
+    void update_whenAllDataIsPresent_thenAllFieldsAreUpdated() {
 
         int itemId = 1;
         int bookerId = 1;
@@ -258,7 +258,7 @@ class ItemServiceImplTest {
     }
 
     @Test
-    void update_NameIsNull() {
+    void update_whenNameIsMissing_thenOtherFieldsAreStillUpdated() {
 
         int itemId = 1;
         int bookerId = 1;
@@ -280,7 +280,7 @@ class ItemServiceImplTest {
     }
 
     @Test
-    void update_DescriptionIsNull() {
+    void update_whenDescriptionIsMissing_thenOtherFieldsAreStillUpdated() {
 
         int itemId = 1;
         int bookerId = 1;
@@ -302,7 +302,7 @@ class ItemServiceImplTest {
     }
 
     @Test
-    void update_AvailableIsNull() {
+    void update_whenAvailableIsMissing_thenOtherFieldsAreStillUpdated() {
 
         int itemId = 1;
         int bookerId = 1;
@@ -324,7 +324,7 @@ class ItemServiceImplTest {
     }
 
     @Test
-    void update_NotOwner_Exception() {
+    void update_whenNotOwnerTriesToUpdate_thenNoSuchElementExceptionIsThrown() {
 
         int itemId = 1;
         int bookerId = 1;
@@ -342,7 +342,7 @@ class ItemServiceImplTest {
 
 
     @Test
-    void search_posititve() {
+    void search_whenQueryIsPresent_thenAllResultsOnPageAreReturned() {
         int ownerId = 2;
         PageRequest pageRequest = PageRequest.of(0, 10);
 
@@ -358,14 +358,14 @@ class ItemServiceImplTest {
     }
 
     @Test
-    void search_empty_negative() {
+    void search_whenQueryIsEmpty_thenEmptyListIsReturned() {
         String query = "";
         List<Item> actual = service.search(query, 0, 10);
         assertEquals(actual, List.of());
     }
 
     @Test
-    void getAllUserItems() {
+    void getAllUserItems_whenAllUserItemsAreRequested_thenTheAreReturned() {
         PageRequest pageRequest = PageRequest.of(0, 10);
 
         int ownerId = 2;
@@ -416,7 +416,7 @@ class ItemServiceImplTest {
     }
 
     @Test
-    void getItem_negative() {
+    void getItem_whenItemIsMissing_thenNoSuchElementExceptionIsThrown() {
         when(itemRepository.findById(1)).thenReturn(Optional.empty());
         assertThrows(NoSuchElementException.class, () -> service.getItem(1));
     }

@@ -43,7 +43,7 @@ class BookingServiceImplTest {
     BookingServiceImpl service;
 
     @Test
-    void create_positive() {
+    void create_whenAllFieldsValid_thenBookingCreated() {
         Integer userId = 1;
         LocalDateTime startDt = LocalDateTime.now().plusHours(1);
         LocalDateTime endDt = LocalDateTime.now().plusDays(10);
@@ -65,7 +65,7 @@ class BookingServiceImplTest {
     }
 
     @Test
-    void getBooking_when_Owner_Accepted() {
+    void getBooking_whenOwnerAccepts_thenStatusChangesToAccepted() {
         User booker = new User(1, "test", "test@mail.ru");
         User owner = new User(2, "owner", "owner@mail.ru");
         Item existingItem = new Item(1, "itemName", "itemDesc", true, owner, null);
@@ -80,13 +80,13 @@ class BookingServiceImplTest {
     }
 
     @Test
-    void getBooking_when_NonExisted_Declined() {
+    void getBooking_whenNonExistedBookingGet_ThenExceptionIsThrown() {
         assertThrows(NoSuchElementException.class, () -> service.getBooking(1, 1));
     }
 
 
     @Test
-    void getBooking_when_NotOwner_Declined() {
+    void getBooking_whenNotOwnerTriesToGet_ThenExceptionIsThrown() {
         User booker = new User(1, "test", "test@mail.ru");
         User owner = new User(2, "owner", "owner@mail.ru");
         Item existingItem = new Item(1, "itemName", "itemDesc", true, booker, null);
@@ -100,7 +100,7 @@ class BookingServiceImplTest {
     }
 
     @Test
-    void create_whenBookingMyOwnItem_then_NoSuchElementException() {
+    void create_whenTryingBookMyOwnItem_thenNoSuchElementExceptionIsThrown() {
         Integer userId = 1;
         User booker = new User(1, "test", "test@mail.ru");
         Item existingItem = new Item(1, "itemName", "itemDesc", true, booker, null);
@@ -114,7 +114,7 @@ class BookingServiceImplTest {
     }
 
     @Test
-    void when_getBooking_setAcceptStatus_approved_positive() {
+    void setAcceptStatus_whenBookingIsApproved_ThenStatusChngesToPositive() {
         Integer bookerId = 1;
         Integer ownerId = 2;
         Integer bookingId = 1;
@@ -139,7 +139,7 @@ class BookingServiceImplTest {
     }
 
     @Test
-    void when_getBooking_setAcceptStatus_declined_positive() {
+    void setAcceptStatus_whenBookingIsDeclined_thenStatusChangesToRejected() {
         Integer bookerId = 1;
         Integer ownerId = 2;
         Integer bookingId = 1;
@@ -164,7 +164,7 @@ class BookingServiceImplTest {
     }
 
     @Test
-    void when_getBooking_setAcceptStatusNotOwner_negative() {
+    void setAcceptStatus_whenStatusTriesToChangeNotOwner_thenNoSuchElementExceptionIsThrown() {
         Integer bookerId = 1;
         Integer ownerId = 2;
         Integer bookingId = 1;
@@ -183,7 +183,7 @@ class BookingServiceImplTest {
     }
 
     @Test
-    void setAcceptStatus_whenNotWaiting_thenCannotBeChanged() {
+    void setAcceptStatus_whenStatusIsNotWaiting_thenValidationExceptionIsThrown() {
         Integer bookerId = 1;
         Integer ownerId = 1;
         Integer bookingId = 1;
@@ -201,7 +201,7 @@ class BookingServiceImplTest {
     }
 
     @Test
-    void getAllUserBookings_All_Positive() {
+    void getAllUserBookings_All_whenBookingsArePresent_thenAllAreReturned() {
         PageRequest pageRequest = PageRequest.of(0, 10);
         Integer bookerId = 1;
         Integer bookingId = 1;
@@ -222,7 +222,7 @@ class BookingServiceImplTest {
     }
 
     @Test
-    void getAllUserBookings_Past_Positive() {
+    void getAllUserBookings_Past_whenBookingsWereInPast_thenTheyAreReturned() {
         Integer bookerId = 1;
         Integer bookingId = 1;
         User booker = new User(bookerId, "test", "test@mail.ru");
@@ -241,7 +241,7 @@ class BookingServiceImplTest {
     }
 
     @Test
-    void getAllUserBookings_Current_Positive() {
+    void getAllUserBookings_Current_whenBookingsAreCurrentlyActive_thenTheyAreReturned() {
         Integer bookerId = 1;
         Integer bookingId = 1;
         User booker = new User(bookerId, "test", "test@mail.ru");
@@ -260,7 +260,7 @@ class BookingServiceImplTest {
     }
 
     @Test
-    void getAllUserBookings_Future_Positive() {
+    void getAllUserBookings_Future_whenBookingsAreInFuture_thenTheyAreReturned() {
         Integer bookerId = 1;
         Integer bookingId = 1;
         User booker = new User(bookerId, "test", "test@mail.ru");
@@ -279,7 +279,7 @@ class BookingServiceImplTest {
     }
 
     @Test
-    void getAllUserBookings_Waiting_Positive() {
+    void getAllUserBookings_Waiting_whenBookingsAreWaiting_thenTheyAreReturned() {
         Integer bookerId = 1;
         Integer bookingId = 1;
         User booker = new User(bookerId, "test", "test@mail.ru");
@@ -298,7 +298,7 @@ class BookingServiceImplTest {
     }
 
     @Test
-    void getAllUserBookings_Rejected_Positive() {
+    void getAllUserBookings_Rejected_whenBookingsAreRejected_thenTheyAreReturned() {
         Integer bookerId = 1;
         Integer bookingId = 1;
         User booker = new User(bookerId, "test", "test@mail.ru");
@@ -317,7 +317,7 @@ class BookingServiceImplTest {
     }
 
     @Test
-    void getAllUserItemsBookings_All_Positive() {
+    void getAllUserItemsBookings_All_WhenAsked_thenAllAreReturned() {
         PageRequest pageRequest = PageRequest.of(0, 10);
         Integer bookerId = 1;
         Integer bookingId = 1;
@@ -337,7 +337,7 @@ class BookingServiceImplTest {
     }
 
     @Test
-    void getAllUserItemsBookings_Past_Positive() {
+    void getAllUserItemsBookings_Past_WhenWereInPast_thenAllUserItemsAreReturned() {
         PageRequest pageRequest = PageRequest.of(0, 10);
         Integer bookerId = 1;
         Integer bookingId = 1;
@@ -357,7 +357,7 @@ class BookingServiceImplTest {
     }
 
     @Test
-    void getAllUserItemsBookings_Current_Positive() {
+    void getAllUserItemsBookings_Current_WhenBookingsAreCurrentlyActive_thenTheyAreReturned() {
         PageRequest pageRequest = PageRequest.of(0, 10);
         Integer bookerId = 1;
         Integer bookingId = 1;
@@ -377,7 +377,7 @@ class BookingServiceImplTest {
     }
 
     @Test
-    void getAllUserItemsBookings_Future_Positive() {
+    void getAllUserItemsBookings_Future_WhenBookingsAreInFuture_thenTheyAreReturned() {
         PageRequest pageRequest = PageRequest.of(0, 10);
         Integer bookerId = 1;
         Integer bookingId = 1;
@@ -397,7 +397,7 @@ class BookingServiceImplTest {
     }
 
     @Test
-    void getAllUserItemsBookings_Waiting_Positive() {
+    void getAllUserItemsBookings_Waiting_whenBookingsAreWaiting_thenTheyAreReturned() {
         PageRequest pageRequest = PageRequest.of(0, 10);
         Integer bookerId = 1;
         Integer bookingId = 1;
@@ -417,7 +417,7 @@ class BookingServiceImplTest {
     }
 
     @Test
-    void getAllUserItemsBookings_Rejected_Positive() {
+    void getAllUserItemsBookings_Rejected_WhenBookingsAreRejected_thenTheyAreReturned() {
         PageRequest pageRequest = PageRequest.of(0, 10);
         Integer bookerId = 1;
         Integer bookingId = 1;

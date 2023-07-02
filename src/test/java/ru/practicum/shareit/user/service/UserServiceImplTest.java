@@ -26,7 +26,7 @@ class UserServiceImplTest {
     private UserServiceImpl service;
 
     @Test
-    void getUser_whenUserFound_thenUserReturned() {
+    void getUser_whenUserIdFound_thenUserGetsReturned() {
         Integer userId = 0;
         User user = new User();
         when(repository.findById(userId)).thenReturn(Optional.of(user));
@@ -44,7 +44,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void getAll_positive() {
+    void getAll_whenUsersArePresent_thenTheyAreReturned() {
         Integer userId = 1;
         User user = new User(userId,
                 "Name",
@@ -57,7 +57,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void createUser_whenNameValid_thenSavedUser() {
+    void createUser_whenFieldsAreValid_thenUserIsSaved() {
         User user = new User();
         when(repository.save(user)).thenReturn(user);
 
@@ -67,7 +67,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void update_positive() {
+    void update_whenSomeFieldsArePresent_thenUserIsUpdated() {
         Integer userId = 1;
         User user = new User(userId,
                 "Name",
@@ -91,7 +91,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void updateUser_whenUserFound_thenUpdatedOnlyAvailableFieldsEmail() {
+    void updateUser_whenNameIsNotPresent_thenOthersFieldsAreUpdated() {
         Integer userId = 1;
         User user = new User(userId,
                 "Name",
@@ -115,7 +115,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void updateUser_whenUserFound_thenUpdatedOnlyAvailableFieldsName() {
+    void updateUser_whenEmailIsMissing_theOtherFieldsAreUpdated() {
         Integer userId = 1;
         User user = new User(userId,
                 "Name",
@@ -139,7 +139,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void remove() {
+    void remove_whenSomeIdentifierIsGiven_thenNoExceptionIsThrown() {
         assertDoesNotThrow(() -> service.remove(1));
     }
 }

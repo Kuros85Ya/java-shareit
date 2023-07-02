@@ -43,7 +43,7 @@ class RequestControllerTest {
 
     @SneakyThrows
     @Test
-    void create() {
+    void create_whenAllFieldsValid_thenRequestIsCreated() {
         Integer ownerId = 1;
         User owner = new User(1, "test", "test@mail.ru");
         LocalDateTime created = LocalDateTime.now();
@@ -74,7 +74,7 @@ class RequestControllerTest {
 
     @SneakyThrows
     @Test
-    void getResponsesToUserRequest() {
+    void getResponsesToUserRequest_whenResponsesArePresent_thenTheyAreReturned() {
         Integer requestorId = 1;
         User requestor = new User(requestorId, "requestor", "requestor@mail.ru");
         LocalDateTime created = LocalDateTime.now().minusDays(1);
@@ -123,7 +123,7 @@ class RequestControllerTest {
 
     @SneakyThrows
     @Test
-    void getAllRequestsPageable() {
+    void getAllRequestsPageable_whenAllRequestsAreRequested_thenAllOnPageAreReturned() {
         Integer requestorId = 1;
         User requestor = new User(requestorId, "requestor", "requestor@mail.ru");
         LocalDateTime created = LocalDateTime.now().minusDays(1);
@@ -171,7 +171,7 @@ class RequestControllerTest {
 
     @SneakyThrows
     @Test
-    void getSingleRequestItems() {
+    void getSingleRequestItems_whenAllItemsByRequestArePresent_thenTheyAreReturned() {
         Integer requestorId = 1;
         User requestor = new User(requestorId, "requestor", "requestor@mail.ru");
         LocalDateTime created = LocalDateTime.now().minusDays(1);

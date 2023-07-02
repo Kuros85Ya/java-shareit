@@ -43,7 +43,7 @@ class BookingControllerTest {
 
     @SneakyThrows
     @Test
-    void create() {
+    void create_whenAllDataPresent_thenCreated() {
         Integer bookerId = 1;
         Integer ownerId = 1;
         Integer itemId = 1;
@@ -75,7 +75,7 @@ class BookingControllerTest {
 
     @SneakyThrows
     @Test
-    void update() {
+    void update_whenAllDataPresent_thenUpdated() {
         Integer bookingId = 1;
         Integer ownerId = 1;
         Integer bookerId = 2;
@@ -108,7 +108,7 @@ class BookingControllerTest {
 
     @SneakyThrows
     @Test
-    void getBooking() {
+    void getBooking_whenBookingIsPresent_thenSingleBookingReturned() {
         Integer bookingId = 1;
         Integer ownerId = 1;
         Integer bookerId = 2;
@@ -140,7 +140,7 @@ class BookingControllerTest {
 
     @SneakyThrows
     @Test
-    void getUserBookings() {
+    void getUserBookings_whenBookingsExist_thenAllAreReturned() {
         Integer bookingId = 1;
         Integer ownerId = 1;
         Integer bookerId = 2;
@@ -172,7 +172,7 @@ class BookingControllerTest {
 
     @SneakyThrows
     @Test
-    void getAllUserItemBookings() {
+    void getAllUserItemBookings_whenUserHsBookingsOnItem_thenHisBookingsReturned() {
         Integer bookingId = 1;
         Integer ownerId = 1;
         Integer bookerId = 2;

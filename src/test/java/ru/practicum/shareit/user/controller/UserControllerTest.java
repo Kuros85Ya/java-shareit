@@ -39,7 +39,7 @@ class UserControllerTest {
 
     @SneakyThrows
     @Test
-    void when_createUser_normal_then_isCreatedAndBodyReturned() {
+    void when_createUserAllValid_thenIsCreatedAndBodyReturned() {
 
         User testUser = new User(1, "test", "test@mail.ru");
 
@@ -62,7 +62,7 @@ class UserControllerTest {
 
     @SneakyThrows
     @Test
-    void when_createUser_EmailnotValid_then_badRequestNothingCreated() {
+    void create_whenEmailIsNotValid_thenBadRequestReturnsAndNothingIsCreated() {
 
         User testUser = new User(1, "name", "notValid");
 
@@ -81,7 +81,7 @@ class UserControllerTest {
 
     @SneakyThrows
     @Test
-    void when_createUser_FieldsNotValid_then_badRequestNothingCreated() {
+    void createUser_whenNameIsNotValid_thenBadRequestIsThrownAndNothingIsCreated() {
 
         User testUser = new User(1, null, "test@mail.ru");
 
@@ -100,7 +100,7 @@ class UserControllerTest {
 
     @Test
     @SneakyThrows
-    void updateUser() {
+    void updateUser_whenSomeFieldsArePresent_thenUserIsUpdated() {
         Integer userId = 1;
         UserRequestDTO updatedUser = new UserRequestDTO(
                 userId,
@@ -128,7 +128,7 @@ class UserControllerTest {
 
     @SneakyThrows
     @Test
-    void removeUser() {
+    void removeUser_whenNumberIsPresent_thenSuccessStatusReturnsAndUserIsRemoved() {
         int userId = 1;
 
         mockMvc.perform(delete("/users/" + userId)
@@ -142,7 +142,7 @@ class UserControllerTest {
 
     @SneakyThrows
     @Test
-    void getUser() {
+    void getUser_whenUserIsPresent_thenItGetsReturned() {
         int userId = 1;
         User user = new User(userId, "test", "test@mail.ru");
 
@@ -160,7 +160,7 @@ class UserControllerTest {
 
     @SneakyThrows
     @Test
-    void getAll() {
+    void getAll_whenUsersArePresent_thenTheyAreReturned() {
         int userId = 1;
         User user = new User(userId, "test", "test@mail.ru");
 

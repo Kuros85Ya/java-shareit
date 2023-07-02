@@ -45,7 +45,7 @@ class ItemControllerTest {
 
     @SneakyThrows
     @Test
-    void create() {
+    void create_whenAllIsValid_thenItemIsCreated() {
         LocalDateTime created = LocalDateTime.of(2022, 10, 10, 10, 10);
         int bookerId = 1;
         int ownerId = 2;
@@ -88,7 +88,7 @@ class ItemControllerTest {
 
     @SneakyThrows
     @Test
-    void create_noOwnerHeader() {
+    void create_whenOwnerHeaderIsMissed_thenBadRequestReturns() {
         LocalDateTime created = LocalDateTime.of(2022, 10, 10, 10, 10);
         int bookerId = 1;
         int ownerId = 2;
@@ -126,7 +126,7 @@ class ItemControllerTest {
 
     @SneakyThrows
     @Test
-    void update_positive() {
+    void update_whenSomeDataIsPresent_thenItemIsUpdated() {
         int itemId = 1;
         int ownerId = 2;
 
@@ -153,7 +153,7 @@ class ItemControllerTest {
 
     @SneakyThrows
     @Test
-    void createComment_positive() {
+    void createComment_whenAllFieldsAreValid_thenCommentIsCreated() {
         Integer itemId = 1;
         Integer bookerId = 1;
         LocalDateTime created = LocalDateTime.now();
@@ -179,7 +179,7 @@ class ItemControllerTest {
 
     @SneakyThrows
     @Test
-    void getById() {
+    void getById_whenItemIsPresent_thenItGetsReturned() {
         LocalDateTime startDt = LocalDateTime.now().plusHours(1);
         LocalDateTime endDt = LocalDateTime.now().plusDays(10);
         LocalDateTime created = LocalDateTime.now();
@@ -228,7 +228,7 @@ class ItemControllerTest {
 
     @SneakyThrows
     @Test
-    void getUserItems() {
+    void getUserItems_DefaultRequestParams_whenUserItemsArePresent_thenTheyAreReturned() {
         Integer ownerId = 1;
         User owner = new User(ownerId, "owner", "owner@mail.ru");
 
@@ -260,7 +260,7 @@ class ItemControllerTest {
 
     @SneakyThrows
     @Test
-    void testSearch_withPageRequestParameters() {
+    void search_whenPageRequestParametersAndQueryArePresent_thenSearchResultOnPageReturns() {
         String query = "name";
 
         LocalDateTime created = LocalDateTime.of(2022, 10, 10, 10, 10);

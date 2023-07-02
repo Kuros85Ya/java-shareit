@@ -41,7 +41,7 @@ class RequestServiceImplTest {
     RequestServiceImpl service;
 
     @Test
-    void create_positive() {
+    void create_whenFieldsAreValid_theRequestIsCreated() {
         Integer ownerId = 1;
         User owner = new User(1, "test", "test@mail.ru");
 
@@ -62,7 +62,7 @@ class RequestServiceImplTest {
     }
 
     @Test
-    void getItemsThatWereCreatedByRequest_positive() {
+    void getItemsThatWereCreatedByRequest_whenItemsArePresent_thenTheyAreReturned() {
         Integer requestorId = 1;
         User requestor = new User(requestorId, "requestor", "requestor@mail.ru");
         LocalDateTime created = LocalDateTime.now().minusDays(1);
@@ -102,7 +102,7 @@ class RequestServiceImplTest {
     }
 
     @Test
-    void getAllRequestsPageable_positive_not_owner() {
+    void getAllRequestsPageable_whenNotOwnerAsks_thenNotHisRequestsAreReturned() {
         PageRequest pageRequest = PageRequest.of(0, 10);
         Integer requestorId = 1;
         User requestor = new User(requestorId, "requestor", "requestor@mail.ru");
@@ -142,7 +142,7 @@ class RequestServiceImplTest {
     }
 
     @Test
-    void getAllRequestsPageable_positive_owner_getsEmptyList() {
+    void getAllRequestsPageable_whenOwnerAsks_thenHisRequestsAreNotReturned() {
         PageRequest pageRequest = PageRequest.of(0, 10);
         Integer requestorId = 1;
         User requestor = new User(requestorId, "requestor", "requestor@mail.ru");
@@ -163,7 +163,7 @@ class RequestServiceImplTest {
     }
 
     @Test
-    void getSingleRequestById_positive() {
+    void getSingleRequestById_whenRequestIsPresent_thenItIsRetruned() {
         Integer requestorId = 1;
         User requestor = new User(requestorId, "requestor", "requestor@mail.ru");
         LocalDateTime created = LocalDateTime.now().minusDays(1);
@@ -203,7 +203,7 @@ class RequestServiceImplTest {
     }
 
     @Test
-    void getSingleRequestById_negative() {
+    void getSingleRequestById_whenRequestIsMissing_thenNoSuchElementExceptionIsThrown() {
         Integer requestorId = 1;
         User requestor = new User(requestorId, "requestor", "requestor@mail.ru");
         LocalDateTime created = LocalDateTime.now().minusDays(1);
@@ -236,7 +236,7 @@ class RequestServiceImplTest {
     }
 
     @Test
-    void getRequest_posititve() {
+    void getRequest_wheRequestIsPresent_thenItIsReturned() {
         Integer requestorId = 1;
         User requestor = new User(requestorId, "requestor", "requestor@mail.ru");
         LocalDateTime created = LocalDateTime.now().minusDays(1);
