@@ -1,7 +1,6 @@
 package ru.practicum.shareit.item.repository;
 
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -31,8 +30,8 @@ class ItemRepositoryTest {
     @Autowired
     RequestRepository requestRepository;
 
-    @BeforeEach
-    private void addData() {
+    @Test
+    void search_whenSeveralItemsMatch_thenTheyAreReturned() {
         LocalDateTime created = LocalDateTime.of(2022, 10, 10, 10, 10);
 
         User booker = userRepository.save(new User(null, "test", "test@mail.ru"));
@@ -44,20 +43,9 @@ class ItemRepositoryTest {
         Item item2 = new Item(null, "itemName2", "itemDesc2", true, booker, request);
         itemRepository.save(item1);
         itemRepository.save(item2);
-    }
 
-    @Test
-    void search_whenSeveralItemsMatch_thenTheyAreReturned() {
-        LocalDateTime created = LocalDateTime.of(2022, 10, 10, 10, 10);
         PageRequest pageRequest = PageRequest.of(0, 10);
         List<Item> items = itemRepository.search("nAm", pageRequest);
-
-        User booker = new User(1, "test", "test@mail.ru");
-        User owner = new User(2, "owner", "owner@mail.ru");
-        Request request = new Request(1, "ReqDescription", booker, created);
-
-        Item item1 = new Item(1, "itemName", "itemDesc", true, owner, request);
-        Item item2 = new Item(2, "itemName2", "itemDesc2", true, booker, request);
 
         List<Item> expected = Arrays.asList(item1, item2);
         items.sort(new ItemComparator());
