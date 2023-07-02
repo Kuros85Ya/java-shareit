@@ -142,7 +142,7 @@ class RequestServiceImplTest {
     }
 
     @Test
-    void getAllRequestsPageable_positive_owner() {
+    void getAllRequestsPageable_positive_owner_getsEmptyList() {
         PageRequest pageRequest = PageRequest.of(0, 10);
         Integer requestorId = 1;
         User requestor = new User(requestorId, "requestor", "requestor@mail.ru");

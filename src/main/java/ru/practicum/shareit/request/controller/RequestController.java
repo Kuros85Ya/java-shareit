@@ -41,7 +41,7 @@ public class RequestController {
     }
 
     @GetMapping("/{requestId}")
-    public RequestResponseDTO createComment(@RequestHeader(OWNER_ID_HEADER) Integer userId, @PathVariable Integer requestId) {
+    public RequestResponseDTO getSingleRequestItems(@RequestHeader(OWNER_ID_HEADER) Integer userId, @PathVariable Integer requestId) {
         log.info("Запрошены данные о вещах по одному запросу: {}", requestId);
         return requestService.getSingleRequestById(requestId, userId);
     }

@@ -43,7 +43,7 @@ class BookingServiceImplTest {
     BookingServiceImpl service;
 
     @Test
-    void create_posititve() {
+    void create_positive() {
         Integer userId = 1;
         LocalDateTime startDt = LocalDateTime.now().plusHours(1);
         LocalDateTime endDt = LocalDateTime.now().plusDays(10);
