@@ -51,6 +51,7 @@ public class RequestMapper {
                                         .collect(Collectors.toList())
                         )
                 )
+                .distinct()
                 .collect(Collectors.toList());
     }
 }

@@ -12,8 +12,10 @@ import ru.practicum.shareit.request.dto.RequestedItemResponseDto;
 import ru.practicum.shareit.request.mapper.RequestMapper;
 import ru.practicum.shareit.request.model.Request;
 import ru.practicum.shareit.request.repository.RequestRepository;
+import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserServiceImpl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -34,24 +36,29 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     public List<RequestResponseDTO> getItemsThatWereCreatedByRequest(Integer userId) {
-        userService.getUser(userId);
-        List<Request> allRequests = requestRepository.findAll();
-        List<Item> allItems = allRequests.stream().map(itemRepository::findAllByRequest).flatMap(List::stream).collect(Collectors.toList());
+        User requestor = userService.getUser(userId);
 
-        List<RequestedItemResponseDto> itemResponses = allItems.stream().map(RequestMapper::toItemRequestResponseDto).collect(Collectors.toList());
-        return RequestMapper.toRequestResponseDto(allRequests, itemResponses);
+        List<Item> items = new ArrayList<>();
+        List<Request> requests = new ArrayList<>();
+        List<Object[]> objects = requestRepository.findRequestsWithItemsByUser(requestor);
+        parseRepositoryRequestsWithItemsObjects(objects, items, requests);
+
+        List<RequestedItemResponseDto> allItemsResponse = items.stream().map(RequestMapper::toItemRequestResponseDto).collect(Collectors.toList());
+        return RequestMapper.toRequestResponseDto(requests, allItemsResponse);
     }
 
     @Override
     public List<RequestResponseDTO> getAllRequestsPageable(Integer userId, Integer from, Integer size) {
         PageRequest request = RequestMapper.toPageRequest(from, size);
-        List<Request> neededRequests = requestRepository.findAll(request)
-                .stream()
-                .filter(it -> !it.getRequestor().getId().equals(userId))
-                .collect(Collectors.toList());
-        List<RequestedItemResponseDto> allItems = neededRequests.stream().map(itemRepository::findAllByRequest).flatMap(List::stream).map(RequestMapper::toItemRequestResponseDto).collect(Collectors.toList());
+        User requestor = userService.getUser(userId);
 
-        return RequestMapper.toRequestResponseDto(neededRequests, allItems);
+        List<Item> items = new ArrayList<>();
+        List<Request> requests = new ArrayList<>();
+        List<Object[]> objects = requestRepository.findAllRequestsOfOtherUsersWithItemsPageable(requestor, request);
+        parseRepositoryRequestsWithItemsObjects(objects, items, requests);
+
+        List<RequestedItemResponseDto> allItemsResponse = items.stream().map(RequestMapper::toItemRequestResponseDto).collect(Collectors.toList());
+        return RequestMapper.toRequestResponseDto(requests, allItemsResponse);
     }
 
     @Override
@@ -65,5 +72,16 @@ public class RequestServiceImpl implements RequestService {
     public Request getRequest(Integer requestId) {
         return requestRepository.findById(requestId).orElseThrow(()
                 -> new NoSuchElementException("Запрос с ID = " + requestId + " не найден."));
+    }
+
+    private void parseRepositoryRequestsWithItemsObjects(List<Object[]> objects, List<Item> items, List<Request> requests) {
+        for (Object[] obj : objects) {
+            Item item = (Item) obj[0];
+            if (item != null) {
+                items.add(item);
+            }
+            Request req = (Request) obj[1];
+            requests.add(req);
+        }
     }
 }

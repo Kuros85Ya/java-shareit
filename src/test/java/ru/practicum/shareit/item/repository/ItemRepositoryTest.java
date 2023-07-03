@@ -39,10 +39,8 @@ class ItemRepositoryTest {
 
         Request request = requestRepository.save(new Request(1, "ReqDescription", booker, created));
 
-        Item item1 = new Item(null, "itemName", "itemDesc", true, owner, request);
-        Item item2 = new Item(null, "itemName2", "itemDesc2", true, booker, request);
-        itemRepository.save(item1);
-        itemRepository.save(item2);
+        Item item1 = itemRepository.save(new Item(null, "itemName", "itemDesc", true, owner, request));
+        Item item2 = itemRepository.save(new Item(null, "itemName2", "itemDesc2", true, booker, request));
 
         PageRequest pageRequest = PageRequest.of(0, 10);
         List<Item> items = itemRepository.search("nAm", pageRequest);

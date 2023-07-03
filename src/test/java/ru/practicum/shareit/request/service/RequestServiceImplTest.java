@@ -5,7 +5,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
@@ -18,10 +17,7 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserServiceImpl;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -82,9 +78,19 @@ class RequestServiceImplTest {
                 owner,
                 request);
 
+        Item createdItem2 = new Item(2,
+                "itemName2",
+                "itemDesc2",
+                true,
+                owner,
+                request);
+
         when(userService.getUser(requestorId)).thenReturn(requestor);
-        when(requestRepository.findAll()).thenReturn(Arrays.asList(request));
-        when(itemRepository.findAllByRequest(request)).thenReturn(List.of(createdItem));
+        Object[] obj = {createdItem, request};
+        Object[] obj2 = {createdItem2, request};
+        List<Object[]> objList = List.of(obj, obj2);
+
+        when(requestRepository.findRequestsWithItemsByUser(requestor)).thenReturn(objList);
 
         RequestedItemResponseDto expectedItem = new RequestedItemResponseDto(createdItem.getId(),
                 createdItem.getName(),
@@ -92,10 +98,16 @@ class RequestServiceImplTest {
                 createdItem.getAvailable(),
                 request.getId());
 
+        RequestedItemResponseDto expectedItem2 = new RequestedItemResponseDto(createdItem2.getId(),
+                createdItem2.getName(),
+                createdItem2.getDescription(),
+                createdItem2.getAvailable(),
+                request.getId());
+
         RequestResponseDTO expected = new RequestResponseDTO(request.getId(),
                 request.getDescription(),
                 request.getCreated(),
-                List.of(expectedItem));
+                List.of(expectedItem, expectedItem2));
 
         List<RequestResponseDTO> actual = service.getItemsThatWereCreatedByRequest(requestorId);
         assertEquals(List.of(expected), actual);
@@ -123,19 +135,35 @@ class RequestServiceImplTest {
                 owner,
                 request);
 
-        when(requestRepository.findAll(pageRequest)).thenReturn(new PageImpl<>(Arrays.asList(request)));
-        when(itemRepository.findAllByRequest(request)).thenReturn(List.of(createdItem));
+        Item createdItem2 = new Item(2,
+                "itemName2",
+                "itemDesc2",
+                true,
+                owner,
+                request);
+        Object[] obj = {createdItem, request};
+        Object[] obj2 = {createdItem2, request};
+        List<Object[]> objList = List.of(obj, obj2);
 
-        RequestedItemResponseDto expectedItem = new RequestedItemResponseDto(createdItem.getId(),
+        when(userService.getUser(ownerId)).thenReturn(owner);
+        when(requestRepository.findAllRequestsOfOtherUsersWithItemsPageable(owner, pageRequest)).thenReturn(objList);
+
+        RequestedItemResponseDto expectedItem1 = new RequestedItemResponseDto(createdItem.getId(),
                 createdItem.getName(),
                 createdItem.getDescription(),
                 createdItem.getAvailable(),
                 request.getId());
 
+        RequestedItemResponseDto expectedItem2 = new RequestedItemResponseDto(createdItem2.getId(),
+                createdItem2.getName(),
+                createdItem2.getDescription(),
+                createdItem2.getAvailable(),
+                request.getId());
+
         RequestResponseDTO expected = new RequestResponseDTO(request.getId(),
                 request.getDescription(),
                 request.getCreated(),
-                List.of(expectedItem));
+                List.of(expectedItem1, expectedItem2));
 
         List<RequestResponseDTO> actual = service.getAllRequestsPageable(ownerId, 0, 10);
         assertEquals(List.of(expected), actual);
@@ -148,15 +176,13 @@ class RequestServiceImplTest {
         User requestor = new User(requestorId, "requestor", "requestor@mail.ru");
         LocalDateTime created = LocalDateTime.now().minusDays(1);
 
-        Integer ownerId = 2;
-        User owner = new User(ownerId, "owner", "owner@mail.ru");
-
         Request request = new Request(1,
                 "desc1",
                 requestor,
                 created);
 
-        when(requestRepository.findAll(pageRequest)).thenReturn(new PageImpl<>(Arrays.asList(request)));
+        when(userService.getUser(requestorId)).thenReturn(requestor);
+        when(requestRepository.findAllRequestsOfOtherUsersWithItemsPageable(requestor, pageRequest)).thenReturn(Collections.emptyList());
 
         List<RequestResponseDTO> actual = service.getAllRequestsPageable(requestorId, 0, 10);
         assertEquals(List.of(), actual);
