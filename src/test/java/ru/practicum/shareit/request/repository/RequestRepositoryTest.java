@@ -22,13 +22,13 @@ import static org.junit.jupiter.api.Assertions.*;
 class RequestRepositoryTest {
 
     @Autowired
-    ItemRepository itemRepository;
+    private ItemRepository itemRepository;
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     @Autowired
-    RequestRepository requestRepository;
+    private RequestRepository requestRepository;
 
     @Test
     void findRequestsWithItemsByUser_whenSeveralItemsOnOneRequest_thenAllItemsAreReturned() {

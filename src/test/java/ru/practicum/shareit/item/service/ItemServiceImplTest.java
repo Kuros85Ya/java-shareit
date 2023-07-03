@@ -35,22 +35,22 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class ItemServiceImplTest {
     @Mock
-    UserServiceImpl userService;
+    private UserServiceImpl userService;
 
     @Mock
-    ItemRepository itemRepository;
+    private ItemRepository itemRepository;
 
     @Mock
-    CommentRepository commentRepository;
+    private CommentRepository commentRepository;
 
     @Mock
-    BookingRepository bookingRepository;
+    private BookingRepository bookingRepository;
 
     @Mock
-    RequestServiceImpl requestService;
+    private RequestServiceImpl requestService;
 
     @InjectMocks
-    ItemServiceImpl service;
+    private ItemServiceImpl service;
 
     @Test
     void getById_whenCommentsAndBookingArePresent_thenItemWithWholeInformationIsReturned() {

@@ -33,14 +33,16 @@ import static org.mockito.Mockito.when;
 class BookingServiceImplTest {
 
     @Mock
-    UserServiceImpl userService;
+    private UserServiceImpl userService;
+
     @Mock
-    ItemServiceImpl itemService;
+    private ItemServiceImpl itemService;
+
     @Mock
-    BookingRepository repository;
+    private BookingRepository repository;
 
     @InjectMocks
-    BookingServiceImpl service;
+    private BookingServiceImpl service;
 
     @Test
     void create_whenAllFieldsValid_thenBookingCreated() {
@@ -69,7 +71,7 @@ class BookingServiceImplTest {
         User booker = new User(1, "test", "test@mail.ru");
         User owner = new User(2, "owner", "owner@mail.ru");
         Item existingItem = new Item(1, "itemName", "itemDesc", true, owner, null);
-        LocalDateTime startDt =  LocalDateTime.now().plusHours(1);
+        LocalDateTime startDt = LocalDateTime.now().plusHours(1);
         LocalDateTime endDt = LocalDateTime.now().plusDays(10);
         LocalDateTime created = LocalDateTime.now();
 

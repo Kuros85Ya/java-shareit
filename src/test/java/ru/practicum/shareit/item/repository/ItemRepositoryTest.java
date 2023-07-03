@@ -22,13 +22,13 @@ import static org.junit.jupiter.api.Assertions.*;
 class ItemRepositoryTest {
 
     @Autowired
-    ItemRepository itemRepository;
+    private ItemRepository itemRepository;
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     @Autowired
-    RequestRepository requestRepository;
+    private RequestRepository requestRepository;
 
     @Test
     void search_whenSeveralItemsMatch_thenTheyAreReturned() {

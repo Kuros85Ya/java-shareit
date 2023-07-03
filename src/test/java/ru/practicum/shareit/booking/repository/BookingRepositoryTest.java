@@ -26,16 +26,16 @@ import static org.junit.jupiter.api.Assertions.*;
 class BookingRepositoryTest {
 
     @Autowired
-    ItemRepository itemRepository;
+    private ItemRepository itemRepository;
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     @Autowired
-    RequestRepository requestRepository;
+    private RequestRepository requestRepository;
 
     @Autowired
-    BookingRepository bookingRepository;
+    private BookingRepository bookingRepository;
 
     @Test
     void getAllUserItems_whenSeveralItemsHaveBooking_ThenAllAreReturned() {

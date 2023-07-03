@@ -39,7 +39,7 @@ class BookingControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    BookingService service;
+    private BookingService service;
 
     @SneakyThrows
     @Test

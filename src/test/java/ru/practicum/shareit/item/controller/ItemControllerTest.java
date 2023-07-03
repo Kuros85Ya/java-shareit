@@ -41,7 +41,7 @@ class ItemControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    ItemService service;
+    private ItemService service;
 
     @SneakyThrows
     @Test

@@ -39,7 +39,7 @@ class RequestControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    RequestService service;
+    private RequestService service;
 
     @SneakyThrows
     @Test

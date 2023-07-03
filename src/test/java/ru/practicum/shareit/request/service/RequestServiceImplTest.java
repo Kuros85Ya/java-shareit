@@ -27,14 +27,16 @@ import static org.mockito.Mockito.when;
 class RequestServiceImplTest {
 
     @Mock
-    UserServiceImpl userService;
+    private UserServiceImpl userService;
+
     @Mock
-    ItemRepository itemRepository;
+    private ItemRepository itemRepository;
+
     @Mock
-    RequestRepository requestRepository;
+    private RequestRepository requestRepository;
 
     @InjectMocks
-    RequestServiceImpl service;
+    private RequestServiceImpl service;
 
     @Test
     void create_whenFieldsAreValid_theRequestIsCreated() {
