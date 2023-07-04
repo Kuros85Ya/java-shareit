@@ -21,9 +21,9 @@ public interface BookingService {
     /**Получение списка всех бронирований текущего пользователя.
      * Параметр state необязательный и по умолчанию равен ALL (англ. «все»).
      * Бронирования должны возвращаться отсортированными по дате от более новых к более старым.**/
-    List<Booking> getAllUserBookings(Integer userId, State state);
+    List<Booking> getAllUserBookings(Integer userId, State state, Integer from, Integer size);
 
     /**Получение списка бронирований для всех вещей текущего пользователя.
      * Этот запрос имеет смысл для владельца хотя бы одной вещи. Работа параметра state аналогична его работе в предыдущем сценарии.**/
-    List<Booking> getAllUserItemBookings(Integer userId, State state);
+    List<Booking> getAllUserItemBookings(Integer userId, State state, Integer from, Integer size);
 }

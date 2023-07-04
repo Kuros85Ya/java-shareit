@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
-import ru.practicum.shareit.request.ItemRequest;
+import ru.practicum.shareit.request.model.Request;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
@@ -41,5 +41,5 @@ public class Item {
     @ToString.Exclude
     private User owner;
     @ManyToOne
-    private ItemRequest request;
+    private Request request;
 }

@@ -44,15 +44,20 @@ public class BookingController {
     }
 
     @GetMapping()
-    public List<Booking> getUserBookings(@RequestHeader(OWNER_ID_HEADER) Integer userId, @RequestParam(name = "state", defaultValue = "ALL") State state) {
+    public List<Booking> getUserBookings(@RequestHeader(OWNER_ID_HEADER) Integer userId,
+                                         @RequestParam(name = "state", defaultValue = "ALL") State state,
+                                         @RequestParam(defaultValue = "0") Integer from,
+                                         @RequestParam(defaultValue = "10") Integer size) {
         log.info("Вывести бронирование пользователя " + userId);
-        return service.getAllUserBookings(userId, state);
+        return service.getAllUserBookings(userId, state, from, size);
     }
 
     @GetMapping("/owner")
     public List<Booking> getAllUserItemBookings(@RequestHeader(OWNER_ID_HEADER) Integer userId,
-                                                @RequestParam(name = "state", defaultValue = "ALL") State state) {
+                                                @RequestParam(name = "state", defaultValue = "ALL") State state,
+                                                @RequestParam(defaultValue = "0") Integer from,
+                                                @RequestParam(defaultValue = "10") Integer size) {
         log.info("Запрос всех бронирований по всем вещам пользователя " + userId);
-        return service.getAllUserItemBookings(userId, state);
+        return service.getAllUserItemBookings(userId, state, from, size);
     }
 }

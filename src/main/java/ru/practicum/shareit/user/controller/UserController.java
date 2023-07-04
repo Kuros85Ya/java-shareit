@@ -42,7 +42,7 @@ public class UserController {
     @GetMapping("/{userId}")
     public User getById(@PathVariable int userId) {
         log.info("Вывести пользователя ID = {}", userId);
-        return service.getById(userId);
+        return service.getUser(userId);
     }
 
     @DeleteMapping("/{userId}")

@@ -4,10 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.item.dto.CommentDto;
-import ru.practicum.shareit.item.dto.CommentResponseDTO;
-import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.dto.ItemResponseDto;
+import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
 
@@ -25,14 +22,14 @@ public class ItemController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Item create(@RequestBody @Valid Item item, @RequestHeader(OWNER_ID_HEADER) Integer userId) {
+    public CreatedItemResponseDto create(@RequestBody @Valid ItemRequestDto item, @RequestHeader(OWNER_ID_HEADER) Integer userId) {
         log.info("Создаем вещь: {}", item);
         return itemService.create(userId, item);
     }
 
     @PostMapping("/{itemId}/comment")
     @ResponseStatus(HttpStatus.OK)
-    public CommentResponseDTO createComment(@RequestBody @Valid CommentDto comment, @RequestHeader(OWNER_ID_HEADER) Integer userId, @PathVariable Integer itemId) {
+    public CommentResponseDTO createComment(@RequestBody @Valid CommentDto comment,@RequestHeader(OWNER_ID_HEADER) Integer userId, @PathVariable Integer itemId) {
         log.info("Оставлен комментарий к вещи: {}", itemId);
         return itemService.createComment(comment, userId, itemId);
     }
@@ -51,14 +48,14 @@ public class ItemController {
     }
 
     @GetMapping()
-    public List<ItemResponseDto> getUserItems(@RequestHeader(OWNER_ID_HEADER) Integer userId) {
+    public List<ItemResponseDto> getUserItems(@RequestHeader(OWNER_ID_HEADER) Integer userId, @RequestParam(defaultValue = "0") Integer from, @RequestParam(defaultValue = "10") Integer size) {
         log.info("Вывести вещи пользователя ID = {}", userId);
-        return itemService.getAllUserItems(userId);
+        return itemService.getAllUserItems(userId, from, size);
     }
 
     @GetMapping("/search")
-    public List<Item> getUserItems(@RequestParam(name = "text", defaultValue = "") String query) {
+    public List<Item> search(@RequestParam(name = "text", defaultValue = "") String query, @RequestParam(defaultValue = "0") Integer from, @RequestParam(defaultValue = "10") Integer size) {
         log.info("Вывести вещи по запросу {}", query);
-        return itemService.search(query);
+        return itemService.search(query, from, size);
     }
 }

@@ -2,6 +2,7 @@ package ru.practicum.shareit.booking.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.comparator.BookingComparator;
 import ru.practicum.shareit.booking.dto.BookingDto;
@@ -11,9 +12,10 @@ import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.item.service.ItemServiceImpl;
+import ru.practicum.shareit.request.mapper.RequestMapper;
 import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.user.repository.UserRepository;
+import ru.practicum.shareit.user.service.UserServiceImpl;
 
 import javax.validation.ValidationException;
 import java.time.LocalDateTime;
@@ -26,18 +28,18 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class BookingServiceImpl implements BookingService {
-    private final UserRepository userRepository;
-    private final ItemRepository itemRepository;
-    private final BookingRepository bookingRepository;
+    private final UserServiceImpl userService;
+    private final ItemServiceImpl itemService;
+    private final BookingRepository repository;
 
 
     @Override
     public Booking create(Integer userId, BookingDto bookingDto) throws ValidationException {
-        User booker = getUser(userId);
-        Item item = getItem(bookingDto.getItemId());
+        User booker = userService.getUser(userId);
+        Item item = itemService.getItem(bookingDto.getItemId());
         Booking newBooking = BookingMapper.toBooking(bookingDto, booker, item, Status.WAITING);
         validateBooking(newBooking);
-        return bookingRepository.save(newBooking);
+        return repository.save(newBooking);
     }
 
     @Override
@@ -57,37 +59,38 @@ public class BookingServiceImpl implements BookingService {
         } else {
             booking.setStatus(Status.REJECTED);
         }
-        return bookingRepository.save(booking);
+        return repository.save(booking);
     }
 
     @Override
-    public List<Booking> getAllUserBookings(Integer userId, State state) {
+    public List<Booking> getAllUserBookings(Integer userId, State state, Integer from, Integer size) {
         List<Booking> bookings;
-        User user = getUser(userId);
+        User user = userService.getUser(userId);
+        PageRequest request = RequestMapper.toPageRequest(from, size);
 
         switch (state) {
             case ALL:
-                bookings = bookingRepository.findAllByBooker(user);
+                bookings = repository.findAllByBookerOrderByCreatedDesc(user, request);
                 break;
             case PAST:
-                bookings = bookingRepository.getBookingsByBookerAndEndIsBefore(user, LocalDateTime.now())
+                bookings = repository.getBookingsByBookerAndEndIsBefore(user, LocalDateTime.now())
                         .stream()
                         .filter(it -> (it.getStatus().equals(Status.APPROVED) || it.getStatus().equals(Status.WAITING)))
                         .collect(Collectors.toList());
                 break;
             case CURRENT:
-                bookings = bookingRepository.getBookingsByBookerAndStartIsBeforeAndEndIsAfter(user, LocalDateTime.now(), LocalDateTime.now());
+                bookings = repository.getBookingsByBookerAndStartIsBeforeAndEndIsAfter(user, LocalDateTime.now(), LocalDateTime.now());
                 break;
             case FUTURE:
-                bookings = bookingRepository.getBookingsByBookerAndStartIsAfter(user, LocalDateTime.now())
+                bookings = repository.getBookingsByBookerAndStartIsAfter(user, LocalDateTime.now())
                         .stream().filter(it -> (it.getStatus().equals(Status.APPROVED) || it.getStatus().equals(Status.WAITING)))
                         .collect(Collectors.toList());
                 break;
             case WAITING:
-                bookings = bookingRepository.getBookingsByBookerAndStatusEquals(user, Status.WAITING);
+                bookings = repository.getBookingsByBookerAndStatusEquals(user, Status.WAITING);
                 break;
             case REJECTED:
-                bookings = bookingRepository.getBookingsByBookerAndStatusEquals(user, Status.REJECTED);
+                bookings = repository.getBookingsByBookerAndStatusEquals(user, Status.REJECTED);
                 break;
             default:
                 throw new ValidationException("Такого статуса не существует");
@@ -97,12 +100,13 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<Booking> getAllUserItemBookings(Integer userId, State state) {
-        User user = getUser(userId);
+    public List<Booking> getAllUserItemBookings(Integer userId, State state, Integer from, Integer size) {
+        User user = userService.getUser(userId);
         List<Booking> bookings;
 
-        List<Item> itemsOwned = itemRepository.findAllByOwner(user);
-        List<Booking> allUserBookings = itemsOwned.stream().map(bookingRepository::findAllByItem).flatMap(List::stream).collect(Collectors.toList());
+        PageRequest request = RequestMapper.toPageRequest(from, size);
+
+        List<Booking> allUserBookings = repository.getAllUserItems(user, request);
 
         switch (state) {
             case ALL:
@@ -178,19 +182,9 @@ public class BookingServiceImpl implements BookingService {
         }
     }
 
-    private Booking getBooking(Integer bookingId) {
-        return bookingRepository.findById(bookingId).orElseThrow(()
+    public Booking getBooking(Integer bookingId) {
+        return repository.findById(bookingId).orElseThrow(()
                 -> new NoSuchElementException("Бронирование с ID = " + bookingId + " не найдено."));
-    }
-
-    private User getUser(Integer userId) {
-        return userRepository.findById(userId).orElseThrow(()
-                -> new NoSuchElementException("Пользователь с ID = " + userId + " не найден."));
-    }
-
-    private Item getItem(Integer itemId) {
-        return itemRepository.findById(itemId).orElseThrow(()
-                -> new NoSuchElementException("Вещь с ID = " + itemId + " не найдена."));
     }
 
     private void validateBooking(Booking booking) {

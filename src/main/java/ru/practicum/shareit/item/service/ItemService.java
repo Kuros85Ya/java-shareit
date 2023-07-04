@@ -1,9 +1,6 @@
 package ru.practicum.shareit.item.service;
 
-import ru.practicum.shareit.item.dto.CommentDto;
-import ru.practicum.shareit.item.dto.CommentResponseDTO;
-import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.dto.ItemResponseDto;
+import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.List;
@@ -12,13 +9,13 @@ public interface ItemService {
 
     ItemResponseDto getById(int itemId, int userId);
 
-    Item create(Integer userId, Item item);
+    CreatedItemResponseDto create(Integer userId, ItemRequestDto item);
 
     CommentResponseDTO createComment(CommentDto comment, Integer userId, Integer authorId);
 
     Item update(Integer userId, ItemDto item);
 
-    List<Item> search(String query);
+    List<Item> search(String query, Integer from, Integer size);
 
-    List<ItemResponseDto> getAllUserItems(Integer userId);
+    List<ItemResponseDto> getAllUserItems(Integer userId, Integer from, Integer size);
 }
