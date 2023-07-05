@@ -24,7 +24,7 @@ public class BookingController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Booking create(@RequestBody @Valid BookingDto booking, @RequestHeader(OWNER_ID_HEADER) Integer userId) {
-        log.info("Создаем вещь: {}", booking);
+        log.info("Создаем бронирование: {}", booking);
         return service.create(userId, booking);
     }
 

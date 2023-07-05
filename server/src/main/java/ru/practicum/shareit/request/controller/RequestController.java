@@ -36,7 +36,7 @@ public class RequestController {
 
     @GetMapping("/all")
     public List<RequestResponseDTO> getAllRequestsPageable(@RequestHeader(OWNER_ID_HEADER) Integer userId, @RequestParam(defaultValue = "0") Integer from, @RequestParam(defaultValue = "10") Integer size) {
-        log.info("Вывести все ответы на запрос пользователя ID = {}", userId);
+        log.info("Вывести все запросы кроме созданных пользователем ID = {}", userId);
         return requestService.getAllRequestsPageable(userId, from, size);
     }
 
