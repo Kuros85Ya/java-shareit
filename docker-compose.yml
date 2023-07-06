@@ -3,7 +3,7 @@ version: '3.8'
 # имена и описания контейнеров, которые должны быть развёрнуты
 services:
   gateway: gateway
-    build: .
+    build: gateway
     image: gateway-image
     container_name: gateway
     ports:
@@ -13,7 +13,7 @@ services:
       - SHAREIT_SERVER_URL=http://server:9090
 
   server:
-    build: .
+    build: server
     image: server-image
     container_name: server
     ports:
