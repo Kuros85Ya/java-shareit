@@ -9,6 +9,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.user.dto.UserRequestDTO;
+import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 
@@ -41,10 +42,10 @@ class UserControllerTest {
     @Test
     void when_createUserAllValid_thenIsCreatedAndBodyReturned() {
 
-        User testUser = new User(1, "test", "test@mail.ru");
+        UserRequestDTO testUser = new UserRequestDTO(1, "test", "test@mail.ru");
 
         when(service.create(testUser))
-                .thenReturn(testUser);
+                .thenReturn(UserMapper.toUser(testUser));
 
         mockMvc.perform(post("/users")
                         .content(objectMapper.writeValueAsString(testUser))
@@ -58,44 +59,6 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.email", is(testUser.getEmail())));
 
         verify(service).create(testUser);
-    }
-
-    @SneakyThrows
-    @Test
-    void create_whenEmailIsNotValid_thenBadRequestReturnsAndNothingIsCreated() {
-
-        User testUser = new User(1, "name", "notValid");
-
-        when(service.create(testUser))
-                .thenReturn(testUser);
-
-        mockMvc.perform(post("/users")
-                        .content(objectMapper.writeValueAsString(testUser))
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
-
-        verify(service, never()).create(testUser);
-    }
-
-    @SneakyThrows
-    @Test
-    void createUser_whenNameIsNotValid_thenBadRequestIsThrownAndNothingIsCreated() {
-
-        User testUser = new User(1, null, "test@mail.ru");
-
-        when(service.create(testUser))
-                .thenReturn(testUser);
-
-        mockMvc.perform(post("/users")
-                        .content(objectMapper.writeValueAsString(testUser))
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
-
-        verify(service, never()).create(testUser);
     }
 
     @Test

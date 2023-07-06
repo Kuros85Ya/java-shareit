@@ -9,7 +9,6 @@ import ru.practicum.shareit.booking.enums.State;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.service.BookingService;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @Slf4j
@@ -23,7 +22,7 @@ public class BookingController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Booking create(@RequestBody @Valid BookingDto booking, @RequestHeader(OWNER_ID_HEADER) Integer userId) {
+    public Booking create(@RequestBody BookingDto booking, @RequestHeader(OWNER_ID_HEADER) Integer userId) {
         log.info("Создаем бронирование: {}", booking);
         return service.create(userId, booking);
     }

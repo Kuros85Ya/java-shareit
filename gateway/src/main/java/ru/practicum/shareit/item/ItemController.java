@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.CommentRequestDto;
 import ru.practicum.shareit.item.dto.ItemRequestDto;
 import ru.practicum.shareit.item.dto.ItemUpdateRequestDto;
-import ru.practicum.shareit.user.dto.UserUpdateRequestDto;
 
 import javax.validation.Valid;
 

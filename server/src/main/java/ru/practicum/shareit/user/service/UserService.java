@@ -11,7 +11,7 @@ public interface UserService {
 
     User getUser(Integer id);
 
-    User create(User user);
+    User create(UserRequestDTO user);
 
     User update(UserRequestDTO user);
 

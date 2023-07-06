@@ -58,10 +58,12 @@ class UserServiceImplTest {
 
     @Test
     void createUser_whenFieldsAreValid_thenUserIsSaved() {
+        UserRequestDTO userDto = new UserRequestDTO();
+
         User user = new User();
         when(repository.save(user)).thenReturn(user);
 
-        User actual = service.create(user);
+        User actual = service.create(userDto);
         assertEquals(actual, user);
         verify(repository).save(user);
     }

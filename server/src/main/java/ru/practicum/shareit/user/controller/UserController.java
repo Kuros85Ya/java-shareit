@@ -8,7 +8,6 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.dto.UserRequestDTO;
 import ru.practicum.shareit.user.service.UserService;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @Slf4j
@@ -21,13 +20,13 @@ public class UserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public User createUser(@RequestBody @Valid User user) {
+    public User createUser(@RequestBody UserRequestDTO user) {
         log.info("Создаем пользователя: {}", user);
         return service.create(user);
     }
 
     @PatchMapping("/{userId}")
-    public User updateUser(@PathVariable Integer userId, @RequestBody @Valid UserRequestDTO user) {
+    public User updateUser(@PathVariable Integer userId, @RequestBody UserRequestDTO user) {
         user.setId(userId);
         log.info("Меняем пользователя: {}", user);
         return service.update(user);

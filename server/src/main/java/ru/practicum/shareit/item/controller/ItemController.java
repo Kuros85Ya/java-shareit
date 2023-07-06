@@ -8,7 +8,6 @@ import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @Slf4j
@@ -22,20 +21,20 @@ public class ItemController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CreatedItemResponseDto create(@RequestBody @Valid ItemRequestDto item, @RequestHeader(OWNER_ID_HEADER) Integer userId) {
+    public CreatedItemResponseDto create(@RequestBody ItemRequestDto item, @RequestHeader(OWNER_ID_HEADER) Integer userId) {
         log.info("Создаем вещь: {}", item);
         return itemService.create(userId, item);
     }
 
     @PostMapping("/{itemId}/comment")
     @ResponseStatus(HttpStatus.OK)
-    public CommentResponseDTO createComment(@RequestBody @Valid CommentDto comment,@RequestHeader(OWNER_ID_HEADER) Integer userId, @PathVariable Integer itemId) {
+    public CommentResponseDTO createComment(@RequestBody CommentDto comment,@RequestHeader(OWNER_ID_HEADER) Integer userId, @PathVariable Integer itemId) {
         log.info("Оставлен комментарий к вещи: {}", itemId);
         return itemService.createComment(comment, userId, itemId);
     }
 
     @PatchMapping("/{itemId}")
-    public Item update(@PathVariable Integer itemId, @RequestBody @Valid ItemDto item, @RequestHeader(OWNER_ID_HEADER) Integer userId) {
+    public Item update(@PathVariable Integer itemId, @RequestBody ItemDto item, @RequestHeader(OWNER_ID_HEADER) Integer userId) {
         log.info("Изменяем вещь: {}", item);
         item.setId(itemId);
         return itemService.update(userId, item);

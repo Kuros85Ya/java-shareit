@@ -9,7 +9,6 @@ import ru.practicum.shareit.request.dto.RequestResponseDTO;
 import ru.practicum.shareit.request.model.Request;
 import ru.practicum.shareit.request.service.RequestService;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @Slf4j
@@ -23,7 +22,7 @@ public class RequestController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Request create(@RequestBody @Valid RequestRequestDTO request, @RequestHeader(OWNER_ID_HEADER) Integer userId) {
+    public Request create(@RequestBody RequestRequestDTO request, @RequestHeader(OWNER_ID_HEADER) Integer userId) {
         log.info("Создаем запрос: {}", request);
         return requestService.create(userId, request);
     }

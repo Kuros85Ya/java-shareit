@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.user.dto.UserRequestDTO;
+import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -28,8 +29,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User create(User user) {
-        return repository.save(user);
+    public User create(UserRequestDTO user) {
+        return repository.save(UserMapper.toUser(user));
     }
 
     @Override
