@@ -1,28 +1,44 @@
+# версия Docker Compose
 version: '3.8'
+# имена и описания контейнеров, которые должны быть развёрнуты
 services:
-  gateway:
-    build:
-    image:
-    container_name:
+  gateway: gateway
+    build: .
+    image: gateway-image
+    container_name: gateway
     ports:
       - "8080:8080"
-    depends_on:
+    depends_on: server
     environment:
       - SHAREIT_SERVER_URL=http://server:9090
 
   server:
-    build:
-    image:
-    container_name:
+    build: .
+    image: server-image
+    container_name: server
     ports:
       - "9090:9090"
+      # "зависит от",
     depends_on:
+      - db
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/shareit
+#      - DB_NAME=later
+#      - POSTGRES_USER=root
+#      - POSTGRES_PASSWORD=root
+#      - DB_HOST=db
+#      - DB_PORT=5432
 
+  # описание контейнера db
   db:
-    image:
-    container_name:
+    # образ, из которого должен быть запущен контейнер
+    image: db-image
+
+    container_name: db
     ports:
       - "6541:5432"
+    # переменные окружения
     environment:
+      - POSTGRES_DB=later
+      - POSTGRES_USER=kuros
+      - POSTGRES_PASSWORD=iamroot
