@@ -40,10 +40,6 @@ public class BookingClient extends BaseClient {
     }
 
     public ResponseEntity<Object> getAllUserItemBookings(long userId, BookingState state, Integer from, Integer size) {
-        Map<String, String> urlParams = Map.of("state", state.name(),
-                "from", from.toString(),
-                "size", size.toString());
-
         String path = UriComponentsBuilder
                 .fromUriString("/owner")
                 .queryParam("state", state.name())
