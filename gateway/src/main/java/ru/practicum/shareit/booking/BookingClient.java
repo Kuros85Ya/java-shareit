@@ -33,7 +33,7 @@ public class BookingClient extends BaseClient {
                 "from", from.toString(),
                 "size", size.toString());
 
-        String path = UriComponentsBuilder.fromUriString("/owner?state={state}&from={from}&size={size}")
+        String path = UriComponentsBuilder.fromUriString("?state={state}&from={from}&size={size}")
                 .buildAndExpand(urlParams)
                 .toUriString();
 
