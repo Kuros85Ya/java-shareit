@@ -29,12 +29,11 @@ public class BookingClient extends BaseClient {
     }
 
     public ResponseEntity<Object> getBookings(long userId, BookingState state, Integer from, Integer size) {
-        Map<String, String> urlParams = Map.of("state", state.name(),
-                "from", from.toString(),
-                "size", size.toString());
-
-        String path = UriComponentsBuilder.fromUriString("?state={state}&from={from}&size={size}")
-                .buildAndExpand(urlParams)
+        String path = UriComponentsBuilder.fromUriString("")
+                .queryParam("state", state.name())
+                .queryParam("from", from)
+                .queryParam("size", size)
+                .buildAndExpand()
                 .toUriString();
 
         return get(path, userId);
@@ -46,8 +45,11 @@ public class BookingClient extends BaseClient {
                 "size", size.toString());
 
         String path = UriComponentsBuilder
-                .fromUriString("/owner?state={state}&from={from}&size={size}")
-                .buildAndExpand(urlParams)
+                .fromUriString("/owner")
+                .queryParam("state", state.name())
+                .queryParam("from", from)
+                .queryParam("size", size)
+                .buildAndExpand()
                 .toUriString();
 
         return get(path, userId);
