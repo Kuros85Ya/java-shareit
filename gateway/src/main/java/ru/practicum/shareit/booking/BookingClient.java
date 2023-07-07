@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.DefaultUriBuilderFactory;
+import org.springframework.web.util.UriComponentsBuilder;
 import ru.practicum.shareit.booking.dto.BookItemRequestDto;
 import ru.practicum.shareit.booking.dto.BookingState;
 import ru.practicum.shareit.client.BaseClient;
@@ -28,21 +29,28 @@ public class BookingClient extends BaseClient {
     }
 
     public ResponseEntity<Object> getBookings(long userId, BookingState state, Integer from, Integer size) {
-        Map<String, Object> parameters = Map.of(
-                "state", state.name(),
-                "from", from,
-                "size", size
-        );
-        return get("?state={state}&from={from}&size={size}", userId, parameters);
+        Map<String, String> urlParams = Map.of("state", state.name(),
+                "from", from.toString(),
+                "size", size.toString());
+
+        String path = UriComponentsBuilder.fromUriString("/owner?state={state}&from={from}&size={size}")
+                .buildAndExpand(urlParams)
+                .toUriString();
+
+        return get(path, userId);
     }
 
     public ResponseEntity<Object> getAllUserItemBookings(long userId, BookingState state, Integer from, Integer size) {
-        Map<String, Object> parameters = Map.of(
-                "state", state.name(),
-                "from", from,
-                "size", size
-        );
-        return get("/owner?state={state}&from={from}&size={size}", userId, parameters);
+        Map<String, String> urlParams = Map.of("state", state.name(),
+                "from", from.toString(),
+                "size", size.toString());
+
+        String path = UriComponentsBuilder
+                .fromUriString("/owner?state={state}&from={from}&size={size}")
+                .buildAndExpand(urlParams)
+                .toUriString();
+
+        return get(path, userId);
     }
 
 
@@ -51,10 +59,19 @@ public class BookingClient extends BaseClient {
     }
 
     public ResponseEntity<Object> setAcceptStatus(long userId, long bookingId, Boolean accepted) {
-        return patch("/" + bookingId + "?approved=" + accepted, userId);
+        Map<String, String> urlParams = Map.of("bookingId", String.valueOf(bookingId));
+
+        String path = UriComponentsBuilder
+                .fromUriString("/{bookingId}")
+                .queryParam("approved", accepted)
+                .buildAndExpand(urlParams)
+                .toUriString();
+
+        return patch(path, userId);
     }
 
     public ResponseEntity<Object> getBooking(long userId, Long bookingId) {
         return get("/" + bookingId, userId);
     }
+
 }
